@@ -26,6 +26,7 @@ function renderProfile() {
       <div>
         <div class="name">于 天行</div>
         <div class="subtitle">北京大学 2025 级本科在读</div>
+        <div class="subtitle">开发者、金融爱好者、社会评论家</div>
       </div>
       <img class="avatar" src="images/avatar.png" alt="avatar" />
     </div>
