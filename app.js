@@ -154,8 +154,8 @@ function renderPortfolio() {
   const divider = document.createElement("div");
   divider.className = "portfolio-divider";
   divider.innerHTML = `
-    <span class="line"></span>
-    <span class="label" id="history-link">历史上的星空</span>
+    <span class="line"></span><br/>
+    <span class="label" id="history-link">历史上的星空</span><br/>
     <span class="line"></span>`;
   container.appendChild(divider);
 
