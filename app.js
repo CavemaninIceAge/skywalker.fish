@@ -237,7 +237,7 @@ function renderAdventures() {
           井字棋 · 数独 · 贪吃蛇 · 扫雷
         </div>
         <div class="blur-overlay">
-          <div class="blocked-text">You are blocked currently.<br/>Log in Please</div>
+          <div class="blocked-text">You are blocked currently.<br/>Log in Please.</div>
         </div>
       </div>`;
   }
