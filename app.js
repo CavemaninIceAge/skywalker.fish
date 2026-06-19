@@ -266,7 +266,7 @@ function renderHistory() {
     return;
   }
   const dates = ["2026-06-17", "2026-06-16", "2026-06-15", "2026-06-14", "2026-06-13"];
-  let html = '<h2>历史上的星空</h2><table class="history-table">';
+  let html = '<table class="history-table">';
   html += "<thead><tr><th>日期</th><th>总市值</th><th>当日盈亏</th><th>累计盈亏</th></tr></thead><tbody>";
   let cumulative = 0;
   const dailyPnl = [156, -89, 234, -45, 112];
