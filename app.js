@@ -19,12 +19,30 @@ function route() {
 window.onhashchange = route;
 window.onload = route;
 
+/* Modal overlay click-to-close */
+document.getElementById("modal-overlay").onclick = function (e) {
+  if (e.target === this) {
+    this.classList.add("hidden");
+    this.querySelector(".modal-box").innerHTML = "";
+  }
+};
+
+function showPdfModal() {
+  const overlay = document.getElementById("modal-overlay");
+  const box = overlay.querySelector(".modal-box");
+  box.innerHTML = `
+    <div class="pdf-modal-title">未选择的路</div>
+    <div class="pdf-modal-size">PDF · The Road Not Taken</div>
+    <a class="pdf-download-btn" href="files/未选择的路.pdf" download>下载</a>`;
+  overlay.classList.remove("hidden");
+}
+
 /* === Profile === */
 function renderProfile() {
   main.innerHTML = `
     <div class="profile-header">
       <div>
-        <div class="name">于 天行</div>
+        <div class="name">于 天行 <a class="more-link" href="javascript:void(0)" onclick="showPdfModal()">More about me?</a></div>
         <div class="subtitle">北京大学 2025 级本科在读</div>
         <div class="subtitle">开发者、金融研究员、爱好社会评论、汉族男性</div>
       </div>
