@@ -62,7 +62,7 @@ function renderProfile() {
 /* === Essays === */
 function renderEssays() {
   const essays = [
-    { date: "2026-06-15", slug: "first", title: "写在前面" },
+    { date: "2026-05-29", slug: "beijing-station", title: "走出北京站" },
   ];
   let html = '<div class="section-title" style="margin-top:0">Essays</div>';
   for (const e of essays) {
@@ -77,12 +77,29 @@ function renderEssays() {
 }
 
 function renderEssayArticle(slug) {
+  const articles = {
+    "beijing-station": {
+      title: "走出北京站",
+      date: "2026-05-29",
+      body: `走出北京站，无数次无数年这里的回忆层层叠叠，覆盖在这熟习的迎面热风里。这里就像我的家门——我得意地来、失意地来、卷土重来地归来、充满期待地来、安安静静地来来回回。那几栋厚墙高楼永远矗立在上行通道的尽头，车站永远在吞吐着五湖四海的、各怀其志的人。这座都会是永恒的，只有人们起起落落。
+
+没有人像北京一样。在西周先民带着牲口和孩子走到这里筑城后，北京已经存在了2000多年，从14世纪至今，北京享受了700年的黄金时代，没有人有那样长的黄金时代，哪怕在人一生70年的时间里。
+
+没有人能买下北京，没有人能一生拥有整座北京。自天子以至于庶人，我们浮浮沉沉，生活在北京里。
+
+我们浮浮沉沉，我们生活在北京。`,
+    },
+  };
+  const article = articles[slug];
+  const title = article ? article.title : "";
+  const date = article ? article.date : "";
+  const body = article ? article.body : "";
   main.innerHTML = `
     <a class="back-link" href="#/essays">← 返回 Essays</a>
     <div class="essay-article">
-      <h1></h1>
-      <div class="date-big"></div>
-      <div class="body"></div>
+      <h1>${title}</h1>
+      <div class="date-big">${date}</div>
+      ${body.split("\n\n").map(p => `<p style="line-height:2;text-indent:2em;margin-bottom:1em">${p.replace(/\n/g, "<br/>")}</p>`).join("")}
     </div>
   `;
 }
