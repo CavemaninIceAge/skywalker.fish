@@ -31,7 +31,7 @@ function renderProfile() {
       <img class="avatar" src="images/avatar.png" alt="avatar" />
     </div>
     <div class="section-title">Description</div>
-    <div class="section-body"></div>
+    <div class="section-body">我出生在哈尔滨，现在在北京读书。课余时间写代码、看市场、写点东西。相信系统可以被理解、改进，也相信写作是自我诚实的最低成本方式。正在学着做一个既能建造、也能守住的人。</div>
     <div class="section-title">Education</div>
     <div class="edu-row">
       <img src="images/pku.png" alt="北大" />
