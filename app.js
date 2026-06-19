@@ -62,7 +62,7 @@ function renderProfile() {
 /* === Essays === */
 function renderEssays() {
   const essays = [
-    { date: "2026-05-29", slug: "beijing-station", title: "走出北京站" },
+    { date: "2026-05-29", slug: "beijing-station", title: "永远的北京" },
   ];
   let html = '<div class="section-title" style="margin-top:0">Essays</div>';
   for (const e of essays) {
@@ -79,7 +79,7 @@ function renderEssays() {
 function renderEssayArticle(slug) {
   const articles = {
     "beijing-station": {
-      title: "走出北京站",
+      title: "永远的北京",
       date: "2026-05-29",
       body: `走出北京站，无数次无数年这里的回忆层层叠叠，覆盖在这熟习的迎面热风里。这里就像我的家门——我得意地来、失意地来、卷土重来地归来、充满期待地来、安安静静地来来回回。那几栋厚墙高楼永远矗立在上行通道的尽头，车站永远在吞吐着五湖四海的、各怀其志的人。这座都会是永恒的，只有人们起起落落。
 
