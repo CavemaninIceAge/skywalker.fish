@@ -63,6 +63,9 @@ function renderProfile() {
 function renderEssays() {
   const essays = [
     { date: "2026-05-29", slug: "beijing-station", title: "永远的北京" },
+    { date: "2026-05-11", slug: "chasing-lightning", title: "追逐下一道闪电（机考前的一个深夜）" },
+    { date: "2026-05-10", slug: "ideal-middle-class", title: "An Ideal Type of Middle-Class Family" },
+    { date: "2026-04-14", slug: "transfer-summer-eve", title: "转专业夏前夜" },
   ];
   let html = '<div class="section-title" style="margin-top:0">Essays</div>';
   for (const e of essays) {
@@ -78,6 +81,21 @@ function renderEssays() {
 
 function renderEssayArticle(slug) {
   const articles = {
+    "chasing-lightning": {
+      title: "追逐下一道闪电（机考前的一个深夜）",
+      date: "2026-05-11",
+      body: `我想，每个有科学梦想的人都会为那些命题着迷，我们不知道它们对不对，它们就在那儿，有着充分的可解释性。我看初等数论时，发现素数居然如此严谨的遵循1/lnx的分布密度，让我颇为惊讶，我们习以为常的一切里居然有众多的巧合，而我们甚至不知道那是为什么。在昨夜，我看一个留学中介的面试指导，要回答一个问题"夜空为什么是黑的"，我们用"太阳不在"、"星际尘埃"、"恒星能量衰减"这种话语在疑问的苗头熄灭它，更深的解释指向宇宙并非静态而永恒：它有有限的年龄，并且正在膨胀，遥远天体的光要么尚未抵达，要么已在宇宙膨胀中被拉长、稀释。这个巨大的秘密就这么挂在所有人的头顶，直到有一个人提出那个为什么。
+
+我们习以为常的一切中，常常隐藏着深层的秩序。发现这些秩序，解释这些秩序，就有了后来被我们称作常识的科学。灵感从不凭空而来，它们需要联想，需要众多的积累，然后在神经元某个连接的瞬间擦出那么一点火花，然后我们捉住火花，对那些大问题而言，这如同一个人追到了一道闪电。这是一种小概率事件，但如果我们不去追逐云层，闪电的概率就会更低更低，直到不见。
+
+我们如何定义这个笼统的"创造"，我想应该是积累基础，然后去迁移，发现可以解决更多丰富的问题，像 Dijkstra 算法一样，我们不是凭空抵达终点，而是从已经确定的地方出发，用已有知识不断更新通向远处的路径。我们不可能在对前置知识掌握不牢固清楚的情况下搜索到下一个地方的解法。我思考天才和我们的区别，在更强的算力外，或许仍然是已有的积累。所有人都需要极其大量的积累，像一个不知疲倦的人追逐一道闪电。
+
+我相信天才的存在，也相信有些人确实拥有更强的算力和更杰出的头脑，但同样相信积累和迁移。在灵感如闪电击中我们的概率下，我们和那些没有到千古罕见的聪明人的距离，其实远远没有那么巨大。一些后来卓有成就的人，也并不总是在早期评价体系中一路领先。成绩、绩点、竞赛履历当然重要，但它们并不能穷尽一个人的上限。真正漫长的学术道路里，问题感、韧性、积累和迁移能力，都会重新塑造一个人的轨迹。哪怕是 IMO 金牌，也往往经历了从小学时代开始、持续十余年的高强度训练。今日横亘在我面前的天堑，并不只是天赋造成的，也来自他们早已完成而我尚未完成的积累。我想，天赋之外，我们更缺积累与时间。
+
+过去一个十年已经结束了，虽然我没有像那些中学竞赛生一样打好数理基础，但也已经到了北京大学；我想从今天起学好数理基础，像那些小学时代开始每天学习数学教材的人们，我想用下一个十年追逐一道闪电。
+
+这篇文章意象的灵感，来源于张益唐接受"晚点"采访的文章"追逐第二道闪电"。`,
+    },
     "beijing-station": {
       title: "永远的北京",
       date: "2026-05-29",
@@ -88,6 +106,32 @@ function renderEssayArticle(slug) {
 没有人能买下北京，没有人能一生拥有整座北京。自天子以至于庶人，我们浮浮沉沉，生活在北京里。
 
 我们浮浮沉沉，我们生活在北京。`,
+    },
+    "ideal-middle-class": {
+      title: "An Ideal Type of Middle-Class Family",
+      date: "2026-05-10",
+      body: `In School dining hall I always notice such a set of people: A 30s man looking skillful with a certain social status, a young woman looking refined and graceful, along with 2 or 3 children aged from in primary school to in middle school. That our Chinese type of American style middle-class family. The man may be an engineer in some industrial design company or computer entrepreneur, and the woman may be an employee of a prestigious government department. Their children may be in Bayi, Shiyi, Rendafuzhong etc. The children may engage in subject olympiads from a very early age. They may have voyaged around the planet. They must be proficient in some sports like soccer, badminton or basketball. They are well raised with healthy mind and good slim look which would always attract peers. In a word, they are just like their peers in California or the states of the east coast.
+
+Each period has its noble life. It's the decent family of our times. I had nothing like them before, but I now at least surpass their children by means of school work. The past shall not be edited, But I'm sure, my child must be embraced in such a wonderful vibe, growing up with liberty, in-time guidance, and environment filled with love.
+
+One day, maybe everyone of our society will live such a life. And it's our duty to make the world a better place for our descendants.`,
+    },
+    "transfer-summer-eve": {
+      title: "转专业夏前夜",
+      date: "2026-04-14",
+      body: `到今晚走出图书馆的大门，刚刚写完去年的转数二真题过bar不少，我忽然发现，这已经是我写的第25轮机考计时模拟了。而在这以外看的算法教材、写的专题，已经繁杂无从考证。
+
+无心夜晚穿行于北京的夏夜，潮湿炎热、晴朗又辽阔，就像朗夜里的安徽黄山。恍惚之中，有一种我高考前前后后气候的错觉——人生有许多这样悬而未决的时刻，我们或恐惧、或急切着，而"那件事"只是以恒定的脚步走来，审阅我们的准备，然后在几天中落下一句转折历史的判决。
+
+我没想到过会有今天，我也没想到过，今天我会这样想。
+
+我试想过体面地表达欢乐，想过存在主义地控诉或赞美世界的不公或恩典。但我只是到天文系骑车，感到复杂而难以言说的满足，只有一个直直的念头：这是一生很难再有的感受，我要学会享受它。记住这种欢欣、沉稳与隐隐不安。
+
+甚至享受潜在的失败。看着空空的vscode，我还是会偶然犯万劫不复的错误，然后几十分钟才找出来。出来做事总要有赢有卑。在最后，我希望自己要做一个输得起的人。
+
+人一生被闪电击中的概率很小，但如果不去追逐雷区，就永远接不到那道闪电。
+
+往日之事不可追，未来之路光明灿烂。`,
     },
   };
   const article = articles[slug];
