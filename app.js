@@ -128,6 +128,20 @@ function renderProfile() {
 
 /* === Essays === */
 function renderEssays() {
+  if (!isLoggedIn()) {
+    main.innerHTML = `
+      <div class="adventure-gate">
+        <div class="game-preview">
+          Essays<br/>
+          随笔与思考
+        </div>
+        <div class="blur-overlay">
+          <div class="blocked-text">You are blocked currently.<br/>Log in Please.</div>
+        </div>
+      </div>`;
+    return;
+  }
+
   const essays = [
     { date: "2026-05-29", slug: "beijing-station", title: "永远的北京" },
     { date: "2026-05-11", slug: "chasing-lightning", title: "追逐下一道闪电（机考前的一个深夜）" },
@@ -147,6 +161,8 @@ function renderEssays() {
 }
 
 function renderEssayArticle(slug) {
+  if (!isLoggedIn()) { location.hash = "#/essays"; return; }
+
   const articles = {
     "chasing-lightning": {
       title: "追逐下一道闪电（机考前的一个深夜）",
