@@ -9,7 +9,7 @@ pages_build_output_dir = "."
 [[d1_databases]]
 binding = "DB"
 database_name = "skywalker-db"
-database_id = ""
+database_id = "4821756d-c157-4d11-803a-b33f9f03d4cb"
 
 # Set via dashboard or: wrangler pages secret put ADMIN_KEY
 # [vars]
