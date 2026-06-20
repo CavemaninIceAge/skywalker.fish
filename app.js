@@ -411,33 +411,36 @@ function renderSignup() {
   main.innerHTML = `
     <div class="signup-page">
       <div class="section-title" style="margin-top:0">Apply for Access</div>
-      <div class="signup-columns">
-        <div class="signup-column">
-          <div class="column-header">
-            <button class="circle-select" id="circle-know" onclick="toggleCircle(this)"></button>
-            <span class="column-title">于天行认识你吗？</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label">你的名字是？</label>
-            <input class="form-input" id="sig-name" placeholder="你的真实姓名" maxlength="60" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">说出你与于天行共同经历的一件事</label>
-            <span class="form-hint">越不为人知越好</span>
-            <textarea class="form-textarea" id="sig-experience" rows="3" placeholder="写下只有你我知道的事..."></textarea>
-          </div>
+
+      <div class="know-toggle">
+        <button class="circle-select" id="circle-know" onclick="toggleKnow()"></button>
+        <span class="column-title">于天行认识你吗？</span>
+      </div>
+
+      <div id="sig-know-yes" class="signup-conditional hidden">
+        <div class="form-group">
+          <label class="form-label">你的名字是？</label>
+          <input class="form-input" id="sig-name" placeholder="你的真实姓名" maxlength="60" />
         </div>
-        <div class="signup-column">
-          <div class="column-header">
-            <button class="circle-select" id="circle-from" onclick="toggleCircle(this)"></button>
-            <span class="column-title">你从哪里听说于天行？</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label">你是谁？</label>
-            <textarea class="form-textarea" id="sig-who" rows="3" placeholder="介绍一下你自己..."></textarea>
-          </div>
+        <div class="form-group">
+          <label class="form-label">说出你与于天行共同经历的一件事</label>
+          <span class="form-hint">越不为人知越好</span>
+          <textarea class="form-textarea" id="sig-experience" rows="3" placeholder="写下只有你我知道的事..."></textarea>
         </div>
       </div>
+
+      <div id="sig-know-no" class="signup-conditional hidden">
+        <div class="form-group">
+          <label class="form-label">你从哪里听说于天行？</label>
+          <input class="form-input" id="sig-howfound" placeholder="比如：朋友介绍、GitHub、社交媒体..." maxlength="200" />
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:32px">
+        <label class="form-label">你是谁？</label>
+        <textarea class="form-textarea" id="sig-who" rows="3" placeholder="介绍一下你自己..."></textarea>
+      </div>
+
       <div class="signup-section">
         <div class="form-row">
           <label class="form-label" for="sig-nickname">你的昵称？</label>
@@ -462,46 +465,59 @@ function autoResize() {
   this.style.height = Math.max(72, this.scrollHeight) + "px";
 }
 
-function toggleCircle(btn) {
-  btn.classList.toggle("selected");
+function toggleKnow() {
+  var circle = document.getElementById("circle-know");
+  circle.classList.toggle("selected");
+  var yesDiv = document.getElementById("sig-know-yes");
+  var noDiv = document.getElementById("sig-know-no");
+  if (circle.classList.contains("selected")) {
+    yesDiv.classList.remove("hidden");
+    noDiv.classList.add("hidden");
+  } else {
+    yesDiv.classList.add("hidden");
+    noDiv.classList.remove("hidden");
+  }
 }
 
 async function submitApplication() {
-  const name = document.getElementById("sig-name").value.trim();
-  const experience = document.getElementById("sig-experience").value.trim();
-  const who = document.getElementById("sig-who").value.trim();
-  const nickname = document.getElementById("sig-nickname").value.trim();
-  const password = document.getElementById("sig-password").value;
+  var knowSelected = document.getElementById("circle-know").classList.contains("selected");
+  var who = document.getElementById("sig-who").value.trim();
+  var nickname = document.getElementById("sig-nickname").value.trim();
+  var password = document.getElementById("sig-password").value;
 
-  if (!name) { alert("请填写你的名字"); return; }
-  if (!experience) { alert("请填写共同经历"); return; }
   if (!who) { alert("请填写你是谁"); return; }
   if (!nickname) { alert("请设置昵称"); return; }
   if (!password || password.length < 4) { alert("密码至少 4 位"); return; }
 
-  const circleKnow = document.getElementById("circle-know");
-  const circleFrom = document.getElementById("circle-from");
-  const knowSelected = circleKnow.classList.contains("selected");
-  const fromSelected = circleFrom.classList.contains("selected");
+  var body = { who_are_you: who, nickname: nickname, know_skywalker: knowSelected };
 
-  const btn = document.getElementById("btn-submit");
+  if (knowSelected) {
+    var name = document.getElementById("sig-name").value.trim();
+    var exp = document.getElementById("sig-experience").value.trim();
+    if (!name) { alert("请填写你的名字"); return; }
+    if (!exp) { alert("请填写共同经历"); return; }
+    body.name = name;
+    body.shared_experience = exp;
+    body.how_found = "";
+  } else {
+    var hf = document.getElementById("sig-howfound").value.trim();
+    if (!hf) { alert("请填写你从哪里听说于天行"); return; }
+    body.name = "";
+    body.shared_experience = "";
+    body.how_found = hf;
+  }
+
+  var btn = document.getElementById("btn-submit");
   btn.disabled = true;
   btn.textContent = "提交中...";
 
   try {
-    const hash = await sha256(password);
-    const res = await fetch("/api/apply", {
+    var hash = await sha256(password);
+    body.password_hash = hash;
+    var res = await fetch("/api/apply", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: name,
-        shared_experience: experience,
-        how_found: fromSelected ? "yes" : "",
-        who_are_you: who,
-        nickname: nickname,
-        password_hash: hash,
-        know_skywalker: knowSelected,
-      }),
+      body: JSON.stringify(body),
     });
     if (res.ok) {
       showSuccessModal();
@@ -693,24 +709,23 @@ function renderApplicationList(apps) {
   }
 
   for (const a of apps) {
+    var knowFields = a.know_skywalker
+      ? `<div class="app-field"><div class="app-field-label">名字</div><div class="app-field-value">${esc(a.name)}</div></div>
+         <div class="app-field"><div class="app-field-label">共同经历</div><div class="app-field-value">${esc(a.shared_experience)}</div></div>`
+      : `<div class="app-field"><div class="app-field-label">从何处听说</div><div class="app-field-value">${esc(a.how_found || "未填写")}</div></div>`;
+
     html += `
       <div class="app-card" id="app-${a.id}">
         <div class="app-card-header">
-          <span class="app-name">${esc(a.name)}</span>
+          <span class="app-name">${esc(a.nickname)}</span>
           <span class="status-badge ${a.status}">${statusLabels[a.status] || a.status}</span>
         </div>
         <div class="app-date">${esc(a.created_at || "")}</div>
         <div class="app-field">
           <div class="app-field-label">认识于天行</div>
-          <div class="app-field-value">${a.know_skywalker ? "✓ 是" : "否"}</div>
+          <div class="app-field-value">${a.know_skywalker ? "✓ 是" : "✗ 否"}</div>
         </div>
-        <div class="app-field">
-          <div class="app-field-label">共同经历</div>
-          <div class="app-field-value">${esc(a.shared_experience)}</div>
-        </div>
-        <div class="app-field">
-          <div class="app-field-label">从何处听说</div>
-          <div class="app-field-value">${esc(a.how_found || "未填写")}</div>
+        ${knowFields}
         </div>
         <div class="app-field">
           <div class="app-field-label">自我介绍</div>

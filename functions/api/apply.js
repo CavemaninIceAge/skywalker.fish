@@ -2,8 +2,18 @@ export async function onRequestPost({ env, request }) {
   const body = await request.json();
   const { name, shared_experience, how_found, who_are_you, nickname, password_hash, know_skywalker } = body;
 
-  if (!name || !shared_experience || !nickname || !password_hash) {
+  if (!who_are_you || !nickname || !password_hash) {
     return new Response("Missing required fields", { status: 400 });
+  }
+
+  if (know_skywalker) {
+    if (!name || !shared_experience) {
+      return new Response("Missing name or shared_experience", { status: 400 });
+    }
+  } else {
+    if (!how_found) {
+      return new Response("Missing how_found", { status: 400 });
+    }
   }
 
   if (nickname.length > 30 || password_hash.length > 64) {
@@ -30,8 +40,8 @@ export async function onRequestPost({ env, request }) {
     INSERT INTO applications (name, shared_experience, how_found, who_are_you, nickname, password_hash, know_skywalker)
     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
   `).bind(
-    name, shared_experience,
-    how_found || "", who_are_you || "",
+    name || "", shared_experience || "",
+    how_found || "", who_are_you,
     nickname, password_hash,
     know_skywalker ? 1 : 0
   ).run();
