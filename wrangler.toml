@@ -1,0 +1,16 @@
+# Cloudflare Pages + D1 configuration for skywalker.fish
+name = "skywalker-fish"
+compatibility_date = "2025-06-20"
+pages_build_output_dir = "."
+
+# D1 database binding — create the DB first, then fill in database_id:
+#   wrangler d1 create skywalker-db
+# Copy the returned UUID below.
+[[d1_databases]]
+binding = "DB"
+database_name = "skywalker-db"
+database_id = ""
+
+# Set via dashboard or: wrangler pages secret put ADMIN_KEY
+# [vars]
+# ADMIN_KEY is set as a secret, not here

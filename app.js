@@ -1,3 +1,18 @@
+/* === Utilities === */
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function esc(s) {
+  if (!s) return "";
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
+}
+
 /* === Router === */
 const main = document.getElementById("main");
 
@@ -10,6 +25,8 @@ function route() {
     case "#/projects": renderProjects(); break;
     case "#/portfolio": renderPortfolio(); break;
     case "#/adventures": renderAdventures(); break;
+    case "#/signup": renderSignup(); break;
+    case "#/admin": renderAdmin(); break;
     default:
       if (hash.startsWith("#/essays/")) renderEssayArticle(hash.slice(9));
       else renderProfile();
@@ -17,7 +34,39 @@ function route() {
 }
 
 window.onhashchange = route;
-window.onload = route;
+window.onload = () => { route(); setupNav(); };
+
+/* === Nav === */
+function setupNav() {
+  document.getElementById("btn-login").onclick = showLoginModal;
+  document.getElementById("btn-signup").onclick = () => { location.hash = "#/signup"; };
+  updateNavState();
+}
+
+function updateNavState() {
+  const btnLogin = document.getElementById("btn-login");
+  const btnSignup = document.getElementById("btn-signup");
+  if (isLoggedIn()) {
+    btnLogin.textContent = "Log out";
+    btnLogin.onclick = logout;
+    btnSignup.style.display = "none";
+  } else {
+    btnLogin.textContent = "Log in";
+    btnLogin.onclick = showLoginModal;
+    btnSignup.style.display = "";
+  }
+}
+
+function isLoggedIn() {
+  return sessionStorage.getItem("skywalker-login") === "1";
+}
+
+function logout() {
+  sessionStorage.removeItem("skywalker-login");
+  sessionStorage.removeItem("skywalker-nickname");
+  updateNavState();
+  location.hash = "#/";
+}
 
 /* Modal overlay click-to-close */
 document.getElementById("modal-overlay").onclick = function (e) {
@@ -306,8 +355,7 @@ function renderHistory() {
 
 /* === Adventures === */
 function renderAdventures() {
-  const loggedIn = sessionStorage.getItem("skywalker-login") === "1";
-  if (loggedIn) {
+  if (isLoggedIn()) {
     renderGames();
   } else {
     main.innerHTML = `
@@ -340,4 +388,354 @@ function renderGames() {
         <h3>扫雷</h3><p>Minesweeper</p>
       </div>
     </div>`;
+}
+
+/* === Signup === */
+function renderSignup() {
+  main.innerHTML = `
+    <div class="signup-page">
+      <div class="section-title" style="margin-top:0">Apply for Access</div>
+      <div class="signup-columns">
+        <div class="signup-column">
+          <div class="column-header">
+            <button class="circle-select" id="circle-know" onclick="toggleCircle(this)"></button>
+            <span class="column-title">于天行认识你吗？</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">你的名字是？</label>
+            <input class="form-input" id="sig-name" placeholder="你的真实姓名" maxlength="60" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">说出你与于天行共同经历的一件事</label>
+            <span class="form-hint">越不为人知越好</span>
+            <textarea class="form-textarea" id="sig-experience" rows="3" placeholder="写下只有你我知道的事..."></textarea>
+          </div>
+        </div>
+        <div class="signup-column">
+          <div class="column-header">
+            <button class="circle-select" id="circle-from" onclick="toggleCircle(this)"></button>
+            <span class="column-title">你从哪里听说于天行？</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">你是谁？</label>
+            <textarea class="form-textarea" id="sig-who" rows="3" placeholder="介绍一下你自己..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="signup-section">
+        <div class="form-row">
+          <label class="form-label" for="sig-nickname">你的昵称？</label>
+          <input class="form-input" id="sig-nickname" placeholder="用于登录" maxlength="30" />
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="sig-password">你的密码？</label>
+          <input class="form-input" id="sig-password" type="password" placeholder="设置登录密码（至少 4 位）" />
+        </div>
+        <button class="submit-btn" id="btn-submit" onclick="submitApplication()">提交申请</button>
+      </div>
+    </div>`;
+
+  document.querySelectorAll(".form-textarea").forEach(function (ta) {
+    ta.addEventListener("input", autoResize);
+    autoResize.call(ta);
+  });
+}
+
+function autoResize() {
+  this.style.height = "auto";
+  this.style.height = Math.max(72, this.scrollHeight) + "px";
+}
+
+function toggleCircle(btn) {
+  btn.classList.toggle("selected");
+}
+
+async function submitApplication() {
+  const name = document.getElementById("sig-name").value.trim();
+  const experience = document.getElementById("sig-experience").value.trim();
+  const who = document.getElementById("sig-who").value.trim();
+  const nickname = document.getElementById("sig-nickname").value.trim();
+  const password = document.getElementById("sig-password").value;
+
+  if (!name) { alert("请填写你的名字"); return; }
+  if (!experience) { alert("请填写共同经历"); return; }
+  if (!who) { alert("请填写你是谁"); return; }
+  if (!nickname) { alert("请设置昵称"); return; }
+  if (!password || password.length < 4) { alert("密码至少 4 位"); return; }
+
+  const circleKnow = document.getElementById("circle-know");
+  const circleFrom = document.getElementById("circle-from");
+  const knowSelected = circleKnow.classList.contains("selected");
+  const fromSelected = circleFrom.classList.contains("selected");
+
+  const btn = document.getElementById("btn-submit");
+  btn.disabled = true;
+  btn.textContent = "提交中...";
+
+  try {
+    const hash = await sha256(password);
+    const res = await fetch("/api/apply", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name,
+        shared_experience: experience,
+        how_found: fromSelected ? "yes" : "",
+        who_are_you: who,
+        nickname: nickname,
+        password_hash: hash,
+        know_skywalker: knowSelected,
+      }),
+    });
+    if (res.ok) {
+      main.innerHTML = `<div class="signup-success">
+        <div class="check">✓</div>
+        <h2>申请已提交</h2>
+        <p>于天行会查看你的申请。<br/>如获批准，即可使用昵称和密码登录 Adventures。</p>
+      </div>`;
+    } else {
+      const err = await res.text();
+      alert("提交失败：" + (err || "未知错误"));
+      btn.disabled = false;
+      btn.textContent = "提交申请";
+    }
+  } catch (e) {
+    alert("网络错误，请稍后重试");
+    btn.disabled = false;
+    btn.textContent = "提交申请";
+  }
+}
+
+/* === Login Modal === */
+function showLoginModal() {
+  if (isLoggedIn()) { logout(); return; }
+
+  const existing = document.getElementById("login-overlay");
+  if (existing) existing.remove();
+
+  const overlay = document.createElement("div");
+  overlay.className = "login-overlay";
+  overlay.id = "login-overlay";
+  overlay.innerHTML = `
+    <div class="login-box" style="position:relative">
+      <button class="close-btn" onclick="document.getElementById('login-overlay').remove()">&times;</button>
+      <h2>Log in</h2>
+      <div class="form-group">
+        <label class="form-label">昵称</label>
+        <input class="form-input" id="login-nickname" placeholder="你的昵称" maxlength="30" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input class="form-input" id="login-password" type="password" placeholder="你的密码" />
+      </div>
+      <div id="login-error" class="login-error"></div>
+      <div class="login-actions">
+        <button class="btn-text" onclick="document.getElementById('login-overlay').remove()">取消</button>
+        <button class="btn-outline" id="btn-do-login" style="border-radius:20px;padding:8px 28px;font-size:14px">登录</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  document.getElementById("btn-do-login").onclick = doLogin;
+  document.getElementById("login-password").onkeydown = (e) => { if (e.key === "Enter") doLogin(); };
+  overlay.onclick = function (e) {
+    if (e.target === overlay) overlay.remove();
+  };
+}
+
+async function doLogin() {
+  const nickname = document.getElementById("login-nickname").value.trim();
+  const password = document.getElementById("login-password").value;
+  const errorEl = document.getElementById("login-error");
+
+  if (!nickname) { errorEl.textContent = "请输入昵称"; return; }
+  if (!password) { errorEl.textContent = "请输入密码"; return; }
+
+  const btn = document.getElementById("btn-do-login");
+  btn.disabled = true;
+  btn.textContent = "登录中...";
+
+  try {
+    const hash = await sha256(password);
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nickname: nickname, password_hash: hash }),
+    });
+    if (res.ok) {
+      sessionStorage.setItem("skywalker-login", "1");
+      sessionStorage.setItem("skywalker-nickname", nickname);
+      document.getElementById("login-overlay").remove();
+      updateNavState();
+      location.hash = "#/adventures";
+    } else {
+      errorEl.textContent = "昵称或密码错误，或账号尚未被批准";
+      btn.disabled = false;
+      btn.textContent = "登录";
+    }
+  } catch (e) {
+    errorEl.textContent = "网络错误，请稍后重试";
+    btn.disabled = false;
+    btn.textContent = "登录";
+  }
+}
+
+/* === Admin === */
+function renderAdmin() {
+  const adminKey = sessionStorage.getItem("skywalker-admin-key");
+  if (!adminKey) {
+    renderAdminAuth();
+    return;
+  }
+  loadApplications();
+}
+
+function renderAdminAuth(errorMsg) {
+  main.innerHTML = `
+    <div class="admin-auth">
+      <h2>Admin Access</h2>
+      <input class="form-input" id="admin-key-input" type="password" placeholder="Admin Key" />
+      <div class="admin-error" id="admin-error">${errorMsg ? esc(errorMsg) : ""}</div>
+      <button class="submit-btn" id="btn-admin-auth">进入</button>
+    </div>`;
+
+  document.getElementById("btn-admin-auth").onclick = adminAuth;
+  document.getElementById("admin-key-input").onkeydown = (e) => {
+    if (e.key === "Enter") adminAuth();
+  };
+}
+
+async function adminAuth() {
+  const key = document.getElementById("admin-key-input").value;
+  if (!key) {
+    document.getElementById("admin-error").textContent = "请输入 Admin Key";
+    return;
+  }
+  sessionStorage.setItem("skywalker-admin-key", key);
+  await loadApplications();
+}
+
+async function loadApplications() {
+  const adminKey = sessionStorage.getItem("skywalker-admin-key");
+  main.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted)">加载中...</div>';
+
+  try {
+    const res = await fetch("/api/admin", {
+      headers: { "X-Admin-Key": adminKey },
+    });
+    if (res.status === 401 || res.status === 403) {
+      sessionStorage.removeItem("skywalker-admin-key");
+      renderAdminAuth("Admin Key 错误");
+      return;
+    }
+    if (!res.ok) {
+      main.innerHTML = '<div class="admin-empty">加载失败，请重试</div>';
+      return;
+    }
+    const apps = await res.json();
+    renderApplicationList(apps);
+  } catch (e) {
+    main.innerHTML = '<div class="admin-empty">加载失败，请稍后重试</div>';
+  }
+}
+
+function renderApplicationList(apps) {
+  const statusLabels = { pending: "待审批", approved: "已批准", rejected: "已拒绝" };
+
+  let html = `<div class="admin-page">
+    <h2>Applications</h2>
+    <div class="admin-subtitle">${apps.length} 个申请</div>`;
+
+  if (apps.length === 0) {
+    html += '<div class="admin-empty">暂无申请</div>';
+  }
+
+  for (const a of apps) {
+    html += `
+      <div class="app-card" id="app-${a.id}">
+        <div class="app-card-header">
+          <span class="app-name">${esc(a.name)}</span>
+          <span class="status-badge ${a.status}">${statusLabels[a.status] || a.status}</span>
+        </div>
+        <div class="app-date">${esc(a.created_at || "")}</div>
+        <div class="app-field">
+          <div class="app-field-label">认识于天行</div>
+          <div class="app-field-value">${a.know_skywalker ? "✓ 是" : "否"}</div>
+        </div>
+        <div class="app-field">
+          <div class="app-field-label">共同经历</div>
+          <div class="app-field-value">${esc(a.shared_experience)}</div>
+        </div>
+        <div class="app-field">
+          <div class="app-field-label">从何处听说</div>
+          <div class="app-field-value">${esc(a.how_found || "未填写")}</div>
+        </div>
+        <div class="app-field">
+          <div class="app-field-label">自我介绍</div>
+          <div class="app-field-value">${esc(a.who_are_you || "")}</div>
+        </div>
+        <div class="app-field">
+          <div class="app-field-label">昵称</div>
+          <div class="app-field-value">${esc(a.nickname)}</div>
+        </div>
+        ${a.status === "pending" ? `
+        <div class="app-card-actions">
+          <button class="btn-approve" onclick="approveApp(${a.id})">批准</button>
+          <button class="btn-reject" onclick="rejectApp(${a.id})">拒绝</button>
+        </div>` : ""}
+      </div>`;
+  }
+  html += '<a class="admin-logout" href="javascript:void(0)" onclick="adminLogout()">退出管理</a></div>';
+  main.innerHTML = html;
+}
+
+async function approveApp(id) {
+  const adminKey = sessionStorage.getItem("skywalker-admin-key");
+  const card = document.getElementById("app-" + id);
+  if (card) card.style.opacity = "0.5";
+
+  try {
+    const res = await fetch("/api/admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Admin-Key": adminKey },
+      body: JSON.stringify({ action: "approve", id: id }),
+    });
+    if (res.ok) {
+      await loadApplications();
+    } else {
+      if (card) card.style.opacity = "1";
+      alert("操作失败");
+    }
+  } catch (e) {
+    if (card) card.style.opacity = "1";
+    alert("网络错误");
+  }
+}
+
+async function rejectApp(id) {
+  const adminKey = sessionStorage.getItem("skywalker-admin-key");
+  const card = document.getElementById("app-" + id);
+  if (card) card.style.opacity = "0.5";
+
+  try {
+    const res = await fetch("/api/admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Admin-Key": adminKey },
+      body: JSON.stringify({ action: "reject", id: id }),
+    });
+    if (res.ok) {
+      await loadApplications();
+    } else {
+      if (card) card.style.opacity = "1";
+      alert("操作失败");
+    }
+  } catch (e) {
+    if (card) card.style.opacity = "1";
+    alert("网络错误");
+  }
+}
+
+function adminLogout() {
+  sessionStorage.removeItem("skywalker-admin-key");
+  location.hash = "#/";
 }
