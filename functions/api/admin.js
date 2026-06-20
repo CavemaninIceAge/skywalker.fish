@@ -35,8 +35,8 @@ export async function onRequestPost({ env, request }) {
     }
 
     await env.DB.prepare(
-      "INSERT OR IGNORE INTO users (nickname, password_hash) VALUES (?1, ?2)"
-    ).bind(app.nickname, app.password_hash).run();
+      "INSERT OR IGNORE INTO users (nickname, password_hash, name, know_skywalker) VALUES (?1, ?2, ?3, ?4)"
+    ).bind(app.nickname, app.password_hash, app.name || "", app.know_skywalker ? 1 : 0).run();
 
     await env.DB.prepare(
       "UPDATE applications SET status = 'approved' WHERE id = ?"

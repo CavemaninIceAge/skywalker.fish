@@ -46,14 +46,25 @@ function setupNav() {
 function updateNavState() {
   const btnLogin = document.getElementById("btn-login");
   const btnSignup = document.getElementById("btn-signup");
+  const navUser = document.getElementById("nav-user");
+
   if (isLoggedIn()) {
-    btnLogin.textContent = "Log out";
-    btnLogin.onclick = logout;
+    btnLogin.style.display = "none";
     btnSignup.style.display = "none";
+    navUser.style.display = "flex";
+
+    const nickname = sessionStorage.getItem("skywalker-nickname") || "";
+    const realName = sessionStorage.getItem("skywalker-name") || "";
+    const knowSkywalker = sessionStorage.getItem("skywalker-know") === "1";
+
+    document.getElementById("nav-nickname").textContent = nickname;
+    document.getElementById("nav-realname").textContent = knowSkywalker ? realName : "邀请访客";
   } else {
+    btnLogin.style.display = "";
     btnLogin.textContent = "Log in";
     btnLogin.onclick = showLoginModal;
     btnSignup.style.display = "";
+    navUser.style.display = "none";
   }
 }
 
@@ -64,6 +75,8 @@ function isLoggedIn() {
 function logout() {
   sessionStorage.removeItem("skywalker-login");
   sessionStorage.removeItem("skywalker-nickname");
+  sessionStorage.removeItem("skywalker-name");
+  sessionStorage.removeItem("skywalker-know");
   updateNavState();
   location.hash = "#/";
 }
@@ -621,8 +634,11 @@ async function doLogin() {
       body: JSON.stringify({ nickname: nickname, password_hash: hash }),
     });
     if (res.ok) {
+      const data = await res.json();
       sessionStorage.setItem("skywalker-login", "1");
-      sessionStorage.setItem("skywalker-nickname", nickname);
+      sessionStorage.setItem("skywalker-nickname", data.nickname);
+      sessionStorage.setItem("skywalker-name", data.name || "");
+      sessionStorage.setItem("skywalker-know", data.know_skywalker ? "1" : "0");
       document.getElementById("login-overlay").remove();
       updateNavState();
       location.hash = "#/adventures";

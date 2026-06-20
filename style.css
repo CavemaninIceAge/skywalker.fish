@@ -39,7 +39,10 @@ nav a {
 nav a:hover { color: var(--accent); }
 .nav-sep { color: #ccc; margin: 0 10px; user-select: none; }
 .brand { font-weight: 700; font-size: 17px; margin-right: 4px; }
-.nav-right { margin-left: auto; display: flex; gap: 10px; }
+.nav-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+.nav-user { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+.nav-nickname { font-size: 16px; font-weight: 600; color: var(--fg); letter-spacing: 0.03em; }
+.nav-realname { font-size: 14px; color: var(--muted); letter-spacing: 0.02em; }
 
 .btn-text {
   background: none; border: none; color: var(--fg);
