@@ -655,6 +655,40 @@ main { max-width: 820px; margin: 0 auto; padding: 48px 24px 120px; }
 }
 .login-box .close-btn:hover { color: var(--fg); }
 
+/* === Success Modal === */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.success-box {
+  background: white;
+  border-radius: 12px;
+  padding: 40px 48px;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+.success-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+}
+.success-text {
+  font-size: 15px;
+  color: var(--fg);
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
 /* === Admin === */
 .admin-page h2 {
   font-size: 24px;

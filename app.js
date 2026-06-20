@@ -504,11 +504,7 @@ async function submitApplication() {
       }),
     });
     if (res.ok) {
-      main.innerHTML = `<div class="signup-success">
-        <div class="check">✓</div>
-        <h2>申请已提交</h2>
-        <p>于天行会查看你的申请。<br/>如获批准，即可使用昵称和密码登录 Adventures。</p>
-      </div>`;
+      showSuccessModal();
     } else {
       const err = await res.text();
       alert("提交失败：" + (err || "未知错误"));
@@ -520,6 +516,36 @@ async function submitApplication() {
     btn.disabled = false;
     btn.textContent = "提交申请";
   }
+}
+
+function showSuccessModal() {
+  const existing = document.getElementById("success-overlay");
+  if (existing) existing.remove();
+
+  const overlay = document.createElement("div");
+  overlay.className = "success-overlay";
+  overlay.id = "success-overlay";
+  overlay.innerHTML = `
+    <div class="success-box">
+      <div class="success-circle">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <polyline points="7,14 12,19 21,9" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="success-text">Successful! Wait for the host to approve.</div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  overlay.onclick = function (e) {
+    if (e.target === overlay) {
+      overlay.remove();
+      location.hash = "#/";
+    }
+  };
+  setTimeout(function () {
+    const el = document.getElementById("success-overlay");
+    if (el) { el.remove(); location.hash = "#/"; }
+  }, 4000);
 }
 
 /* === Login Modal === */
