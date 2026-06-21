@@ -2,7 +2,7 @@ export async function onRequestPost({ env, request }) {
   const body = await request.json();
   const { name, shared_experience, how_found, who_are_you, nickname, password_hash, know_skywalker } = body;
 
-  if (!who_are_you || !nickname || !password_hash) {
+  if (!nickname || !password_hash) {
     return new Response("Missing required fields", { status: 400 });
   }
 
@@ -11,8 +11,8 @@ export async function onRequestPost({ env, request }) {
       return new Response("Missing name or shared_experience", { status: 400 });
     }
   } else {
-    if (!how_found) {
-      return new Response("Missing how_found", { status: 400 });
+    if (!who_are_you || !how_found) {
+      return new Response("Missing who_are_you or how_found", { status: 400 });
     }
   }
 
