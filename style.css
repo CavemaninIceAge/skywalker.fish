@@ -395,6 +395,41 @@ main { max-width: 820px; margin: 0 auto; padding: 48px 24px 120px; }
 .game-card h3 { font-size: 18px; margin-bottom: 6px; }
 .game-card p { font-size: 13px; color: var(--muted); }
 
+/* === Contact === */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 32px;
+  max-width: 600px;
+}
+
+.contact-cell {
+  padding: 12px 0;
+}
+
+.contact-link {
+  text-decoration: none;
+  color: var(--fg);
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  transition: color 0.2s;
+}
+
+.contact-link:hover { color: var(--accent); }
+
+.contact-item {
+  font-size: 16px;
+  color: var(--fg);
+  letter-spacing: 0.02em;
+}
+
+.contact-note {
+  margin-top: 36px;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
+
 /* === Modal === */
 .overlay {
   position: fixed;
