@@ -183,6 +183,7 @@ function renderEssays() {
     { date: "2024-09-03", slug: "beida-lake", title: "没在塘沽看到海，却在北大看见湖" },
     { date: "2025-06-10", slug: "after-gaokao-day1", title: "高考后第一天！" },
   ];
+  essays.sort((a, b) => b.date.localeCompare(a.date));
   let html = '<div class="section-title" style="margin-top:0">Essays</div>';
   for (const e of essays) {
     html += `
@@ -1284,7 +1285,7 @@ function renderAdventures() {
       <div class="adventure-gate">
         <div class="game-preview">
           创意小游戏合集<br/>
-          井字棋 · 数独 · 贪吃蛇 · 扫雷
+          井字棋 · 数独 · 贪吃蛇 · 扫雷 · 灵堂上上香
         </div>
         <div class="blur-overlay">
           <div class="blocked-text">You are blocked currently.<br/>Log in Please.</div>
@@ -1308,6 +1309,9 @@ function renderGames() {
       </div>
       <div class="game-card" onclick="alert('Coming soon')">
         <h3>扫雷</h3><p>Minesweeper</p>
+      </div>
+      <div class="game-card" onclick="alert('Coming soon')">
+        <h3>灵堂上上香</h3><p>Ritual Rave at the Mortuary</p>
       </div>
     </div>`;
 }
@@ -1360,16 +1364,15 @@ function renderSignup() {
         </div>
       </div>
 
-      <div id="sig-know-no" class="signup-conditional hidden">
+      <div id="sig-know-no" class="signup-conditional">
         <div class="form-group">
           <label class="form-label">你从哪里听说于天行？</label>
           <input class="form-input" id="sig-howfound" placeholder="比如：朋友介绍、GitHub、社交媒体..." maxlength="200" />
         </div>
-      </div>
-
-      <div class="form-group" style="margin-top:32px">
-        <label class="form-label">你是谁？</label>
-        <textarea class="form-textarea" id="sig-who" rows="3" placeholder="介绍一下你自己..."></textarea>
+        <div class="form-group">
+          <label class="form-label">你是谁？</label>
+          <textarea class="form-textarea" id="sig-who" rows="3" placeholder="介绍一下你自己..."></textarea>
+        </div>
       </div>
 
       <div class="signup-section">
@@ -1412,27 +1415,29 @@ function toggleKnow() {
 
 async function submitApplication() {
   var knowSelected = document.getElementById("circle-know").classList.contains("selected");
-  var who = document.getElementById("sig-who").value.trim();
   var nickname = document.getElementById("sig-nickname").value.trim();
   var password = document.getElementById("sig-password").value;
 
-  if (!who) { alert("请填写你是谁"); return; }
   if (!nickname) { alert("请设置昵称"); return; }
   if (!password || password.length < 4) { alert("密码至少 4 位"); return; }
 
-  var body = { who_are_you: who, nickname: nickname, know_skywalker: knowSelected };
+  var body = { nickname: nickname, know_skywalker: knowSelected };
 
   if (knowSelected) {
     var name = document.getElementById("sig-name").value.trim();
     var exp = document.getElementById("sig-experience").value.trim();
     if (!name) { alert("请填写你的名字"); return; }
     if (!exp) { alert("请填写共同经历"); return; }
+    body.who_are_you = "";
     body.name = name;
     body.shared_experience = exp;
     body.how_found = "";
   } else {
+    var who = document.getElementById("sig-who").value.trim();
     var hf = document.getElementById("sig-howfound").value.trim();
+    if (!who) { alert("请填写你是谁"); return; }
     if (!hf) { alert("请填写你从哪里听说于天行"); return; }
+    body.who_are_you = who;
     body.name = "";
     body.shared_experience = "";
     body.how_found = hf;
