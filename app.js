@@ -1875,6 +1875,7 @@ function renderContact() {
     { label: "电话", value: "15045089401" },
     { label: "QQ", value: "2813243845" },
     { label: "HuggingFace", value: "@SkywalkerFish", url: "https://huggingface.co/SkywalkerFish" },
+    { label: "Quora", value: "@SkywalkerFish", url: "https://www.quora.com/profile/SkywalkerFish" },
   ];
 
   let html = '<div class="section-title" style="margin-top:0">Contact</div>';
