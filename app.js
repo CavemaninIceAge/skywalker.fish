@@ -199,7 +199,6 @@ const essays = [
     { date: "2025-05-23", slug: "15-days-to-gaokao", title: "距离高考15天" },
     { date: "2025-02-16", slug: "stomachache-111-days", title: "距离高考111天-犯胃病" },
   ];
-}
 
 function renderEssays() {
   if (!isLoggedIn()) {
@@ -572,7 +571,7 @@ function renderContact() {
   const contacts = [
     { label: "GitHub", value: "CavemaninIceAge", url: "https://github.com/CavemaninIceAge" },
     { label: "知乎", value: "@SkywalkerFish", url: "https://www.zhihu.com/people/SkywalkerFish" },
-    { label: "邮箱", value: "txyu@stu.pku.edu.cn", url: "mailto:txyu@stu.pku.edu.cn" },
+    { label: "邮箱", value: "txyu25@stu.pku.edu.cn", url: "mailto:txyu25@stu.pku.edu.cn" },
     { label: "电话", value: "15045089401" },
     { label: "QQ", value: "2813243845" },
     { label: "HuggingFace", value: "@SkywalkerFish", url: "https://huggingface.co/SkywalkerFish" },
