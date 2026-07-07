@@ -2,16 +2,16 @@
   Cache-Control: public, max-age=0, must-revalidate
 
 /*.css
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=0, must-revalidate
 
 /*.js
   Cache-Control: public, max-age=0, must-revalidate
 
 /images/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=3600
 
 /essays/*
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=0, must-revalidate
 
 /api/*
   Cache-Control: no-store

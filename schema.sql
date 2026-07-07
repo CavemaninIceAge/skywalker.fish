@@ -26,3 +26,23 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
 CREATE INDEX IF NOT EXISTS idx_applications_nickname ON applications(nickname);
 CREATE INDEX IF NOT EXISTS idx_users_nickname ON users(nickname);
+
+-- Portfolio holdings (added 2026-07-07)
+CREATE TABLE IF NOT EXISTS portfolio_holdings (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  code TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  shares REAL NOT NULL DEFAULT 0,
+  cost_price REAL NOT NULL DEFAULT 0,
+  exchange TEXT NOT NULL DEFAULT 'sh',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Portfolio history snapshots
+CREATE TABLE IF NOT EXISTS portfolio_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  snapshot_date TEXT NOT NULL UNIQUE,
+  total_value REAL NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);

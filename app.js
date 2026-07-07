@@ -108,7 +108,7 @@ function renderProfile() {
     <div class="profile-header">
       <div>
         <div class="name">于 天行 <a class="more-link" href="javascript:void(0)" onclick="showPdfModal()">More about me?</a></div>
-        <div class="subtitle">北京大学 2025 级本科在读</div>
+        <div class="subtitle">北京大学本科在读</div>
         <div class="subtitle">开发者、金融研究员、爱好社会评论、汉族男性</div>
       </div>
       <img class="avatar" src="images/avatar.png" alt="avatar" />
@@ -120,25 +120,22 @@ function renderProfile() {
       <img src="images/pku-clean.jpeg" alt="北大" />
       <div>
         <div class="school">北京大学</div>
-        <div class="years">2025 — 今</div>
       </div>
     </div>
     <div class="edu-row">
       <img src="images/h3z.png" alt="哈三中" />
       <div>
         <div class="school">哈尔滨市第三中学校</div>
-        <div class="years">2021 — 2024</div>
       </div>
     </div>
     <div class="edu-row">
       <img src="images/gdfz.png" alt="工大附中" />
       <div>
         <div class="school">哈尔滨市工业大学附属中学校</div>
-        <div class="years">2017 — 2021</div>
       </div>
     </div>
     <div class="section-title">Future Vision</div>
-    <div class="section-body"></div>
+    <div class="section-body" style="color:var(--muted);font-style:italic">Coming soon...</div>
   `;
 }
 
@@ -376,12 +373,17 @@ function showProjectPopup(project) {
   actions.style.gap = "12px";
   actions.style.justifyContent = "center";
 
-  const btnSite = document.createElement("a");
-  btnSite.className = "proj-card-btn";
-  btnSite.textContent = "Website";
-  btnSite.href = project.url;
-  btnSite.target = "_blank";
-  btnSite.style.textDecoration = "none";
+  const btnSite = project.url
+    ? (() => {
+        const a = document.createElement("a");
+        a.className = "proj-card-btn";
+        a.textContent = "Website";
+        a.href = project.url;
+        a.target = "_blank";
+        a.style.textDecoration = "none";
+        return a;
+      })()
+    : null;
 
   const btnDL = document.createElement("button");
   btnDL.className = "proj-card-btn";
@@ -402,7 +404,7 @@ function showProjectPopup(project) {
     };
   }
 
-  actions.appendChild(btnSite);
+  if (btnSite) actions.appendChild(btnSite);
   actions.appendChild(btnDL);
   box.appendChild(title);
   box.appendChild(desc);
@@ -412,19 +414,34 @@ function showProjectPopup(project) {
 }
 
 /* === Portfolio === */
-const holdings = [
-  { code: "510300", name: "沪深300ETF", weight: 35, pnl: 2.3, cost: 3.85, price: 3.94, shares: 3200 },
-  { code: "600519", name: "贵州茅台", weight: 25, pnl: -1.2, cost: 1680, price: 1660, shares: 50 },
-  { code: "000858", name: "五粮液", weight: 15, pnl: 5.7, cost: 145, price: 153.3, shares: 300 },
-  { code: "300750", name: "宁德时代", weight: 12, pnl: -0.8, cost: 210, price: 208.3, shares: 180 },
-  { code: "00700", name: "腾讯控股", weight: 8, pnl: 1.5, cost: 380, price: 385.7, shares: 70 },
-  { code: "688981", name: "中芯国际", weight: 5, pnl: 3.1, cost: 52, price: 53.6, shares: 260 },
-];
-
 function renderPortfolio() {
   const container = document.createElement("div");
   container.className = "portfolio-container";
 
+  // Loading state
+  container.innerHTML = '<div style="text-align:center;padding:60px 0;color:var(--muted)">加载持仓数据...</div>';
+  main.appendChild(container);
+
+  fetch("/api/portfolio")
+    .then(res => res.ok ? res.json() : Promise.reject("Failed to fetch"))
+    .then(data => {
+      if (!data.holdings || data.holdings.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:60px 0;color:var(--muted)">暂无持仓数据</div>';
+        return;
+      }
+      renderPortfolioChart(container, data.holdings);
+      renderPortfolioFooter(container);
+    })
+    .catch(() => {
+      container.innerHTML = `
+        <div style="text-align:center;padding:60px 0">
+          <div style="color:var(--muted);margin-bottom:12px">持仓数据加载失败</div>
+          <button class="btn-outline" onclick="renderPortfolio()" style="font-family:inherit">重试</button>
+        </div>`;
+    });
+}
+
+function renderPortfolioChart(container, holdings) {
   const field = document.createElement("div");
   field.className = "star-field";
   field.id = "star-field";
@@ -435,12 +452,13 @@ function renderPortfolio() {
   ];
 
   holdings.forEach((h, i) => {
+    const pos = positions[i] || { x: 10 + i * 15, y: 10 + (i % 3) * 20 };
     const size = 26 + (h.weight / 35) * 34;
     const opacity = 0.55 + (h.pnl > 0 ? 0.4 : 0.15);
     const star = document.createElement("div");
     star.className = "star";
-    star.style.left = positions[i].x + "%";
-    star.style.top = positions[i].y + "%";
+    star.style.left = pos.x + "%";
+    star.style.top = pos.y + "%";
     star.style.width = size + "px";
     star.style.height = size + "px";
     star.style.opacity = opacity;
@@ -450,9 +468,11 @@ function renderPortfolio() {
   });
 
   field.onclick = () => closeStarPopup();
-
+  container.innerHTML = "";
   container.appendChild(field);
+}
 
+function renderPortfolioFooter(container) {
   const divider = document.createElement("div");
   divider.className = "portfolio-divider";
   divider.innerHTML = `
@@ -466,8 +486,6 @@ function renderPortfolio() {
   historyPanel.id = "history-panel";
   container.appendChild(historyPanel);
 
-  main.appendChild(container);
-
   document.getElementById("history-link").onclick = renderHistory;
 }
 
@@ -475,8 +493,9 @@ function showStarPopup(h) {
   let popup = document.getElementById("star-popup");
   if (popup) popup.remove();
 
-  const pnlClass = h.pnl >= 0 ? "up" : "down";
-  const pnlSign = h.pnl >= 0 ? "+" : "";
+  const pnl = h.pnl || 0;
+  const pnlClass = pnl >= 0 ? "up" : "down";
+  const pnlSign = pnl >= 0 ? "+" : "";
 
   popup = document.createElement("div");
   popup.id = "star-popup";
@@ -485,12 +504,13 @@ function showStarPopup(h) {
     <button class="close" onclick="document.getElementById('star-popup').remove()">×</button>
     <h3>${h.name} <span style="font-size:14px;color:var(--muted)">${h.code}</span></h3>
     <div class="detail">
-      成本价：¥${h.cost}<br/>
+      成本价：¥${h.cost_price}<br/>
       现价：¥${h.price}<br/>
       持仓：${h.shares} 股<br/>
-      盈亏：<span class="${pnlClass}">${pnlSign}${h.pnl}%</span><br/>
+      盈亏：<span class="${pnlClass}">${pnlSign}${pnl}%</span><br/>
       仓位占比：${h.weight}%
-    </div>`;
+    </div>
+    ${h.market_open === false ? '<div style="margin-top:12px;font-size:12px;color:var(--muted)">非交易时段，价格为最近收盘价</div>' : ""}`;
   document.body.appendChild(popup);
 }
 
