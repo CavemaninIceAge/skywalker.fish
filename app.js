@@ -108,7 +108,7 @@ function renderProfile() {
     <div class="profile-header">
       <div>
         <div class="name">于 天行 <a class="more-link" href="javascript:void(0)" onclick="showPdfModal()">More about me?</a></div>
-        <div class="subtitle">北京大学本科在读</div>
+        <div class="subtitle">北京大学 2025 级本科在读</div>
         <div class="subtitle">开发者、金融研究员、爱好社会评论、汉族男性</div>
       </div>
       <img class="avatar" src="images/avatar.png" alt="avatar" />
