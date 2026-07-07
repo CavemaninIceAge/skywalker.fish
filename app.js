@@ -135,7 +135,7 @@ function renderProfile() {
       </div>
     </div>
     <div class="section-title">Future Vision</div>
-    <div class="section-body" style="color:var(--muted);font-style:italic">Coming soon...</div>
+    <div class="section-body"></div>
   `;
 }
 
