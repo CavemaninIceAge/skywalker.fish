@@ -141,6 +141,7 @@ function renderProfile() {
 
 /* === Essays === */
 const essays = [
+    { date: "2026-09-02", slug: "who-did-not-come", title: "谁没来" },
     { date: "2026-09-02", slug: "i-thought-there-would-be-a-sound", title: "我以为会有声音" },
     { date: "2026-06-26", slug: "freshman-spring-end", title: "大一下终" },
     { date: "2026-05-29", slug: "beijing-station", title: "永远的北京" },
