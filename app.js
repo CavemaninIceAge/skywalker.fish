@@ -141,6 +141,9 @@ function renderProfile() {
 
 /* === Essays === */
 const essays = [
+    { date: "2026-09-02", slug: "delusion-of-reform", title: "改革妄想" },
+    { date: "2026-09-02", slug: "the-only-reader", title: "唯一的读者" },
+    { date: "2026-09-02", slug: "key-and-door", title: "钥匙和门" },
     { date: "2026-09-02", slug: "who-did-not-come", title: "谁没来" },
     { date: "2026-09-02", slug: "i-thought-there-would-be-a-sound", title: "我以为会有声音" },
     { date: "2026-06-26", slug: "freshman-spring-end", title: "大一下终" },
