@@ -1,0 +1,13 @@
+{
+  "name": "skywalker-fish-tests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Personal website with complete Chinese and English editions",
+  "scripts": {
+    "test": "node --test *.test.cjs",
+    "check": "node --check ../i18n.js && node --check ../essay-catalog.js && node --check ../app.js"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.1"
+  }
+}
