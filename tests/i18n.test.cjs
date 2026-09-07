@@ -99,6 +99,42 @@ test('switching language preserves path, form drafts, relationship toggle and pa
   w.close();
 });
 
+test('every header label reserves the other edition so switching languages moves nothing', async () => {
+  const w = await site({ lang: 'zh' });
+  const messages = w.eval('messages');
+  for (const link of w.document.querySelectorAll('.nav-links a')) {
+    assert.equal(link.textContent, messages.zh[link.dataset.i18n]);
+    assert.equal(link.dataset.alt, messages.en[link.dataset.i18n]);
+  }
+  for (const button of w.document.querySelectorAll('.language-switch button')) assert.equal(button.dataset.alt, button.textContent);
+  w.setLanguage('en');
+  assert.equal(w.document.querySelector('.brand').dataset.alt, messages.zh.profile);
+  assert.equal(w.document.getElementById('btn-signup').dataset.alt, messages.zh.signup);
+  w.sessionStorage.setItem('skywalker-login', '1');
+  w.updateNavState();
+  assert.equal(w.document.getElementById('nav-realname').textContent, messages.en.guest);
+  assert.equal(w.document.getElementById('nav-realname').dataset.alt, messages.zh.guest);
+  w.close();
+});
+
+test('switching language on an article fetches the other edition before the page swaps', async () => {
+  let release;
+  const gate = new Promise(resolve => { release = resolve; });
+  const w = await site({ loggedIn: true, hash: '#/essays/beijing-station', lang: 'zh', fetch: async url => {
+    if (String(url).startsWith('essays/en/')) await gate;
+    return { ok: true, text: async () => fs.readFileSync(path.join(root, String(url)), 'utf8') };
+  } });
+  await tick();
+  assert.match(w.document.querySelector('.essay-body').textContent, /北京站/);
+  w.document.querySelector('[data-language=en]').click(); await tick();
+  assert.equal(w.document.documentElement.lang, 'zh-CN');
+  assert.match(w.document.querySelector('.essay-body').textContent, /北京站/);
+  release(); await tick();
+  assert.equal(w.document.documentElement.lang, 'en');
+  assert.match(w.document.querySelector('.essay-body').textContent, /Beijing/);
+  w.close();
+});
+
 test('login and API errors use selected language without leaking backend text', async () => {
   const w = await site({ fetch: async () => ({ ok: false, status: 401, text: async () => 'Invalid credentials' }) });
   w.showLoginModal();

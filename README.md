@@ -8,7 +8,8 @@ Personal website with Chinese and English editions, built with plain HTML, CSS a
 - English: `https://skywalker.fish/?lang=en`
 - The language selector appears immediately before login and remains available after login.
 - An explicit `lang` URL parameter takes precedence over the saved language. Without either, English browser preferences select English; other preferences select Chinese. Switching still works when local storage is blocked.
-- Hash routes are shared between editions. Changing language preserves the current route and form drafts. Article reading position is restored by paragraph.
+- Hash routes are shared between editions. Changing language preserves the current route and form drafts. Article reading position is restored by paragraph, and the other edition is fetched before the page swaps so no loading state flashes.
+- Header labels carry the other edition's text in `data-alt`; the stylesheet reserves that width under each label, so the header keeps the same geometry in both languages. `applyLanguageChrome()` in `i18n.js` runs from `index.html` before the first paint and again on every change.
 - Shared interface copy lives in `i18n.js`; both dictionaries must have the same keys.
 
 ## Essays and faithful originals

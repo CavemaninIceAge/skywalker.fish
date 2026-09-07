@@ -363,6 +363,33 @@ function t(key, values = {}) {
   return text.replace(/\{(\w+)\}/g, (match, name) => values[name] ?? match);
 }
 
+function otherLanguage(value = language) { return value === "zh" ? "en" : "zh"; }
+
+/* Translate the page chrome (nav, skip link, meta). index.html calls this right after the nav is
+   parsed so the first paint is already in the visitor's language; app.js calls it on every change.
+   Each label also records the other edition's text in data-alt, and the stylesheet reserves that
+   width underneath the visible label, so switching language changes the words and moves nothing. */
+function applyLanguageChrome() {
+  document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+  const other = messages[otherLanguage()];
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+    el.dataset.alt = other[el.dataset.i18n];
+  });
+  const nav = document.querySelector("nav");
+  if (nav) nav.setAttribute("aria-label", t("navLabel"));
+  const switcher = document.querySelector(".language-switch");
+  if (switcher) {
+    switcher.setAttribute("aria-label", t("languageLabel"));
+    switcher.querySelectorAll("[data-language]").forEach(button => {
+      button.setAttribute("aria-pressed", String(button.dataset.language === language));
+      button.dataset.alt = button.textContent;
+    });
+  }
+  const description = document.querySelector('meta[name="description"]');
+  if (description) description.content = t("metaDescription");
+}
+
 function locale() { return language === "zh" ? "zh-CN" : "en-US"; }
 function formatDate(value) {
   if (!value) return "";

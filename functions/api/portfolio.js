@@ -1,8 +1,8 @@
 // Stock exchange prefix mapping
 function getExchangePrefix(code) {
+  if (/^\d{5}$/.test(code)) return "hk";
   if (code.startsWith("6") || code.startsWith("688") || code.startsWith("510")) return "sh";
   if (code.startsWith("0") || code.startsWith("3") || code.startsWith("159")) return "sz";
-  if (code.startsWith("007")) return "hk";
   return "sh";
 }
 

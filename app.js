@@ -21,17 +21,12 @@ let loginRequestVersion = 0;
 let essayMode = null;
 let activeEssaySlug = null;
 let pendingReadingPosition = null;
+let languageRequest = language;
 const essayDocuments = new Map();
+const loadedEssayDocuments = new Set();
 
 function updateLanguageChrome() {
-  document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
-  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
-  document.querySelector("nav").setAttribute("aria-label", t("navLabel"));
-  document.querySelector(".language-switch").setAttribute("aria-label", t("languageLabel"));
-  document.querySelectorAll("[data-language]").forEach(button => {
-    button.setAttribute("aria-pressed", String(button.dataset.language === language));
-  });
-  document.querySelector('meta[name="description"]').content = t("metaDescription");
+  applyLanguageChrome();
   updateNavState();
 }
 
@@ -68,7 +63,25 @@ function route() {
 }
 
 function setLanguage(nextLanguage) {
-  if (!supportedLanguages.includes(nextLanguage) || nextLanguage === language) return;
+  if (!supportedLanguages.includes(nextLanguage)) return;
+  languageRequest = nextLanguage;
+  if (nextLanguage === language) return;
+  const meta = activeEssaySlug ? essays.find(essay => essay.slug === activeEssaySlug) : null;
+  if (meta) {
+    // Fetch the other edition first so the article swaps in one step instead of flashing a loading state.
+    const edition = essayEdition(meta, nextLanguage);
+    const missing = [edition.originalPath, edition.translationPath].filter(path => !loadedEssayDocuments.has(path));
+    if (missing.length) {
+      Promise.allSettled(missing.map(loadEssayDocument)).then(() => {
+        if (languageRequest === nextLanguage && language !== nextLanguage) applyLanguage(nextLanguage);
+      });
+      return;
+    }
+  }
+  applyLanguage(nextLanguage);
+}
+
+function applyLanguage(nextLanguage) {
   const fields = [...document.querySelectorAll("input[id], textarea[id]")].map(el => [el.id, el.value]);
   const knows = document.getElementById("circle-know")?.classList.contains("selected");
   const loginOpen = Boolean(document.getElementById("login-overlay"));
@@ -107,7 +120,9 @@ window.addEventListener("popstate", () => {
   const explicit = new URL(location.href).searchParams.get("lang");
   if (supportedLanguages.includes(explicit) && explicit !== language) setLanguage(explicit);
 });
-window.onload = () => { setupNav(); route(); };
+function init() { setupNav(); route(); }
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+else init();
 
 function setupNav() {
   document.getElementById("btn-login").onclick = showLoginModal;
@@ -149,8 +164,10 @@ function updateNavState() {
     const realName = sessionStorage.getItem("skywalker-name") || "";
     const knowSkywalker = sessionStorage.getItem("skywalker-know") === "1";
 
+    const realNameEl = document.getElementById("nav-realname");
     document.getElementById("nav-nickname").textContent = nickname;
-    document.getElementById("nav-realname").textContent = knowSkywalker ? realName : t("guest");
+    realNameEl.textContent = knowSkywalker ? realName : t("guest");
+    realNameEl.dataset.alt = knowSkywalker ? realName : messages[otherLanguage()].guest;
   } else {
     btnLogin.style.display = "";
     btnLogin.textContent = t("login");
@@ -300,11 +317,25 @@ function loadEssayDocument(path) {
       const source = new DOMParser().parseFromString(text, "text/html");
       const body = source.querySelector(".essay-body");
       if (!body) throw new Error("Essay body missing");
+      loadedEssayDocuments.add(path);
       return { title: source.title, body: body.innerHTML, paragraphs: [...body.children].map(el => el.outerHTML) };
     }).catch(error => { essayDocuments.delete(path); throw error; });
     essayDocuments.set(path, request);
   }
   return essayDocuments.get(path);
+}
+
+// Which file pairs with the original for a given edition. English originals pair with the
+// Chinese rendition; Chinese originals pair with English, unless a Chinese rendition exists
+// for a mixed-language original and the reader is in Chinese.
+function essayEdition(meta, lang) {
+  const translationLanguage = lang === "zh" && meta.hasChineseTranslation ? "zh"
+    : meta.originalLanguage === "en" ? "zh" : "en";
+  return {
+    translationLanguage,
+    originalPath: `essays/${meta.slug}.html`,
+    translationPath: `essays/${translationLanguage}/${meta.slug}.html`,
+  };
 }
 
 async function renderEssayArticle(slug) {
@@ -315,9 +346,7 @@ async function renderEssayArticle(slug) {
     return;
   }
   if (activeEssaySlug !== slug) { activeEssaySlug = slug; essayMode = null; }
-  // English originals stay untouched in English. Mixed originals also have an optional Chinese rendition.
-  const translationLanguage = language === "zh" && meta.hasChineseTranslation ? "zh"
-    : meta.originalLanguage === "en" ? "zh" : "en";
+  const { translationLanguage, originalPath, translationPath } = essayEdition(meta, language);
   if (!essayMode) essayMode = (language === meta.originalLanguage && !(language === "zh" && meta.hasChineseTranslation)) ? "original" : "translation";
   const mode = essayMode;
   const generation = viewGeneration;
@@ -334,8 +363,6 @@ async function renderEssayArticle(slug) {
       <h1>${esc(title)}</h1><div class="date-big">${formatDate(meta.date)}</div>${controls}`;
   }
   main.innerHTML = `${header(meta.title[language])}<p class="empty-state" role="status">${t("loading")}</p></article>`;
-  const originalPath = `essays/${slug}.html`;
-  const translationPath = `essays/${translationLanguage}/${slug}.html`;
   try {
     const [original, translated] = await Promise.all([
       mode !== "translation" ? loadEssayDocument(originalPath) : null,
@@ -567,7 +594,7 @@ function renderPortfolioFooter(container) {
   divider.className = "portfolio-divider";
   divider.innerHTML = `
     <span class="line"></span><br/>
-    <span class="label" id="history-link">${t("holdingHistory")}</span><br/>
+    <button type="button" class="label" id="history-link" aria-expanded="false" aria-controls="history-panel">${t("holdingHistory")}</button><br/>
     <span class="line"></span>`;
   container.appendChild(divider);
 
@@ -612,10 +639,13 @@ function closeStarPopup() {
 
 function renderHistory() {
   const panel = document.getElementById("history-panel");
+  const toggle = document.getElementById("history-link");
   if (panel.classList.contains("open")) {
     panel.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
     return;
   }
+  toggle.setAttribute("aria-expanded", "true");
   const dates = ["2026-06-17", "2026-06-16", "2026-06-15", "2026-06-14", "2026-06-13"];
   let html = `<p class="history-note">${t("historyDemo")}</p><table class="history-table">`;
   html += `<thead><tr><th>${t("date")}</th><th>${t("marketValue")}</th><th>${t("dailyPnl")}</th><th>${t("totalPnl")}</th></tr></thead><tbody>`;
