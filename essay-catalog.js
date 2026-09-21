@@ -335,8 +335,8 @@ const essays = [
     "date": "2025-07-18",
     "slug": "diary-20250718",
     "title": {
-      "zh": "日记",
-      "en": "Diary — July 18, 2025"
+      "zh": "日记-在雁荡山",
+      "en": "Diary — At Yandang Mountain"
     },
     "originalLanguage": "zh",
     "hasChineseTranslation": false,
