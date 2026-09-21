@@ -189,17 +189,6 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-09-01",
-    "slug": "nineteen-gone",
-    "title": {
-      "zh": "19岁完辽",
-      "en": "Nineteen, Gone"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "essay"
-  },
-  {
     "date": "2024-10-02",
     "slug": "return-train",
     "title": {
