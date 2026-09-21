@@ -431,17 +431,6 @@ const essays = [
     "kind": "diary"
   },
   {
-    "date": "2025-06-13",
-    "slug": "diary-20250613",
-    "title": {
-      "zh": "日记",
-      "en": "Diary"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "diary"
-  },
-  {
     "date": "2025-06-12",
     "slug": "diary-20250612",
     "title": {
