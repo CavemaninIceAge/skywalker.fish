@@ -189,17 +189,6 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-10-02",
-    "slug": "return-train",
-    "title": {
-      "zh": "回程的车",
-      "en": "The Train Back"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "essay"
-  },
-  {
     "date": "2024-09-15",
     "slug": "ambition",
     "title": {
