@@ -189,17 +189,6 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-09-15",
-    "slug": "ambition",
-    "title": {
-      "zh": "野心家",
-      "en": "Ambition"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "essay"
-  },
-  {
     "date": "2024-09-10",
     "slug": "rereading-a-poem",
     "title": {
