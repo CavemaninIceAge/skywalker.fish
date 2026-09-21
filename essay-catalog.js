@@ -357,8 +357,8 @@ const essays = [
     "date": "2025-07-03",
     "slug": "diary-20250703",
     "title": {
-      "zh": "日记",
-      "en": "Diary"
+      "zh": "日记-选择北京大学",
+      "en": "Diary — Choosing Peking University"
     },
     "originalLanguage": "zh",
     "hasChineseTranslation": false,
