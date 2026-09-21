@@ -178,7 +178,7 @@ const essays = [
     "kind": "fiction"
   },
   {
-    "date": "2025-09-01",
+    "date": "2024-09-01",
     "slug": "morning-in-the-fields",
     "title": {
       "zh": "清晨在田野上？",
