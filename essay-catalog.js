@@ -420,17 +420,6 @@ const essays = [
     "kind": "diary"
   },
   {
-    "date": "2024-08-28",
-    "slug": "obstruction-and-decision",
-    "title": {
-      "zh": "阻挠与决定",
-      "en": "Obstacles and a Decision"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "essay"
-  },
-  {
     "date": "2024-07-17",
     "slug": "not-crushed-by-ruins",
     "title": {
