@@ -211,17 +211,6 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-09-11",
-    "slug": "diary-20240911",
-    "title": {
-      "zh": "日记",
-      "en": "Diary — September 11, 2024"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "diary"
-  },
-  {
     "date": "2024-09-10",
     "slug": "rereading-a-poem",
     "title": {
