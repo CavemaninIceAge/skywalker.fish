@@ -321,17 +321,6 @@ const essays = [
     "kind": "diary"
   },
   {
-    "date": "2024-08-04",
-    "slug": "how-to-remember-highschool",
-    "title": {
-      "zh": "我用什么回忆高中生活？",
-      "en": "What Will I Remember High School By?"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "essay"
-  },
-  {
     "date": "2024-08-16",
     "slug": "resolve-to-write",
     "title": {
