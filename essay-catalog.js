@@ -368,8 +368,8 @@ const essays = [
     "date": "2025-06-12",
     "slug": "diary-20250612",
     "title": {
-      "zh": "日记",
-      "en": "Diary — June 12, 2025"
+      "zh": "日记-献给阿尔吉侬的花束",
+      "en": "Diary — Flowers for Algernon"
     },
     "originalLanguage": "zh",
     "hasChineseTranslation": false,
