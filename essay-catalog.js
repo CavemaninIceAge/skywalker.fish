@@ -354,17 +354,6 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-08-11",
-    "slug": "invisible-guardian",
-    "title": {
-      "zh": "隐形守护者",
-      "en": "The Invisible Guardian"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "essay"
-  },
-  {
     "date": "2025-07-17",
     "slug": "not-crushed-by-ruins",
     "title": {
