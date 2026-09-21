@@ -255,17 +255,6 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-09-08",
-    "slug": "three-years-rental",
-    "title": {
-      "zh": "出租屋三年",
-      "en": "Three Years in a Rented Room"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "essay"
-  },
-  {
     "date": "2024-09-10",
     "slug": "paddy-field",
     "title": {
