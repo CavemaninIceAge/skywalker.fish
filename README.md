@@ -4,7 +4,7 @@ Personal website with Chinese and English editions, built with plain HTML, CSS a
 
 ## Layout
 
-One page with four anchored sections — `#about`, `#projects`, `#essays`, `#contact` — under a hero with the name, role and portrait. The header stays sticky; the section links sit on the centre line, the language switch on the right, and a `<details>` menu replaces the links below 600px. An essay opens as its own view at `#/essays/<slug>` with a back link to the essays section.
+One page with four anchored sections — `#about`, `#projects`, `#essays`, `#contact` — under a hero with the name, role and portrait. The header stays sticky; the section links sit on the centre line, the language switch on the right, and a `<details>` menu replaces the links below 600px. An essay opens as its own view at `#/essays/<slug>`; its back link (and the browser's back button) returns the reader to the exact spot on the home page they left, while choosing another section from an essay goes to that section.
 
 Older links keep working: `#/essays`, `#/projects` and `#/contact` scroll to their section, and the removed `#/portfolio`, `#/adventures`, `#/albums`, `#/signup` and `#/admin` routes land on the top of the page.
 
@@ -14,7 +14,7 @@ The visual system (warm paper background, deep-red accent, serif display type, h
 
 - Chinese: `https://skywalker.fish/?lang=zh`
 - English: `https://skywalker.fish/?lang=en`
-- An explicit `lang` URL parameter takes precedence over the saved language. Without either, English browser preferences select English; other preferences select Chinese. Switching still works when local storage is blocked.
+- An explicit `lang` URL parameter takes precedence over the saved language. Without either, every visitor starts in English regardless of browser preferences. Switching still works when local storage is blocked.
 - Hash routes are shared between editions. Changing language keeps the current section, the essay year filter and the reading position; on an article the other edition is fetched before the page swaps so no loading state flashes.
 - Header labels carry the other edition's text in `data-alt`; the stylesheet reserves that width under each label, so the header keeps the same geometry in both languages. `applyLanguageChrome()` in `i18n.js` runs from `index.html` before the first paint and again on every change.
 - Shared interface copy lives in `i18n.js`; both dictionaries must have the same keys.

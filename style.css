@@ -139,7 +139,7 @@ h1 .name-alt { display: block; margin-top: 1.15rem; color: var(--accent); font: 
 .about-copy .future { margin: 0; color: var(--muted); font-size: .86rem; line-height: 1.6; }
 .background-list { margin: 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
 .background-list li { display: grid; grid-template-columns: 44px 1fr; align-items: center; gap: 1.25rem; padding: 1.15rem 0; border-bottom: 1px solid var(--line); }
-.background-list img { width: 44px; height: 44px; object-fit: contain; border-radius: 6px; }
+.background-list img { width: 44px; height: 44px; object-fit: contain; }
 .background-list strong, .background-list span { display: block; }
 .background-list strong { font: 600 1.05rem/1.3 var(--serif); }
 .background-list span { margin-top: .25rem; color: var(--muted); font-size: .82rem; }

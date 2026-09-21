@@ -16,6 +16,9 @@ let activeEssaySlug = null;
 let pendingReadingPosition = null;
 let languageRequest = language;
 let essayYear = "all";
+let homeScroll = null; // where the reader left the home page when opening an essay
+let homeHash = null; // the URL hash the home page had at that moment
+let currentHash = location.hash;
 const essayDocuments = new Map();
 const loadedEssayDocuments = new Set();
 
@@ -95,11 +98,20 @@ function cleanLegacyHash(target) {
 
 window.addEventListener("hashchange", () => {
   const wasHome = view === "home";
+  const previousHash = currentHash;
+  currentHash = location.hash;
+  if (wasHome) { homeScroll = window.scrollY; homeHash = previousHash; }
   const target = route();
   if (target.kind === "article") { window.scrollTo({ top: 0, behavior: "instant" }); return; }
   cleanLegacyHash(target);
+  currentHash = location.hash;
+  // Going back to the URL the reader left returns to the spot they left, not to a section heading;
+  // choosing another section from an essay still goes to that section.
+  const returning = !wasHome && homeScroll !== null && currentHash === homeHash;
+  if (returning) window.scrollTo({ top: homeScroll, behavior: "instant" });
   // A native anchor on an already rendered page has scrolled by itself; everything else scrolls here.
-  if (!wasHome || target.legacy) scrollToAnchor(target.anchor);
+  else if (!wasHome || target.legacy) scrollToAnchor(target.anchor);
+  if (!wasHome) { homeScroll = null; homeHash = null; }
   closeMobileMenu();
 });
 window.addEventListener("popstate", () => {
@@ -111,11 +123,20 @@ function init() {
   setupHeader();
   const target = route();
   if (target.kind === "home" && target.legacy) { cleanLegacyHash(target); scrollToAnchor(target.anchor); }
+  currentHash = location.hash;
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();
 
 /* === Header === */
+// The back link on an essay steps back through history when the reader came from the home page,
+// so the URL and the scroll position both return to where they were; otherwise it opens the list.
+function leaveEssay(event) {
+  if (homeScroll === null) return;
+  event.preventDefault();
+  history.back();
+}
+
 function setupHeader() {
   document.querySelectorAll("[data-language]").forEach(button => {
     button.onclick = () => setLanguage(button.dataset.language);
@@ -188,9 +209,9 @@ function renderHero() {
 
 function renderAbout() {
   const schools = [
-    { image: "images/pku-clean.jpeg", alt: "pkuAlt", name: "pku", detail: "pkuDetail" },
-    { image: "images/h3z.png", alt: "h3zAlt", name: "h3z" },
-    { image: "images/gdfz.png", alt: "hitAlt", name: "hitSchool" },
+    { image: "images/pku-emblem.png", alt: "pkuAlt", name: "pku", detail: "pkuDetail" },
+    { image: "images/h3z-emblem.png", alt: "h3zAlt", name: "h3z" },
+    { image: "images/gdfz-emblem.png", alt: "hitAlt", name: "hitSchool" },
   ];
   return `
     <section id="about" class="section about-section">
@@ -375,7 +396,7 @@ async function renderEssayArticle(slug) {
   const meta = essays.find(essay => essay.slug === slug);
   if (!meta) {
     document.title = t("name");
-    main.innerHTML = `<div class="article-page shell"><a class="back-link" href="#essays">${t("backEssays")}</a><p class="empty-state">${t("notFound")}</p></div>`;
+    main.innerHTML = `<div class="article-page shell"><a class="back-link" href="#essays" onclick="leaveEssay(event)">${t("backEssays")}</a><p class="empty-state">${t("notFound")}</p></div>`;
     return;
   }
   if (activeEssaySlug !== slug) { activeEssaySlug = slug; essayMode = null; }
@@ -392,7 +413,7 @@ async function renderEssayArticle(slug) {
     ${["original", "translation", "parallel"].map(value => `<button type="button" class="filter-button reading-option${mode === value ? " is-active" : ""}" aria-pressed="${mode === value}" onclick="setEssayMode('${value}')">${t({ original: "readOriginal", translation: "readTranslation", parallel: "readParallel" }[value])}</button>`).join("")}
   </div>`;
   function header(title) {
-    return `<div class="article-page shell"><a class="back-link" href="#essays">${t("backEssays")}</a><article class="essay-article${mode === "parallel" ? " parallel-reading" : ""}">
+    return `<div class="article-page shell"><a class="back-link" href="#essays" onclick="leaveEssay(event)">${t("backEssays")}</a><article class="essay-article${mode === "parallel" ? " parallel-reading" : ""}">
       <header class="essay-header">
         <p class="tag">${t(kindLabels[meta.kind] || "kindEssay")}</p>
         <h1>${esc(title)}</h1>

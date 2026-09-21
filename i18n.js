@@ -149,7 +149,7 @@ function initialLanguage() {
     const saved = localStorage.getItem("skywalker-language");
     if (supportedLanguages.includes(saved)) return saved;
   } catch { /* Storage can be unavailable in private browsing. */ }
-  return (navigator.language || "zh").toLowerCase().startsWith("en") ? "en" : "zh";
+  return "en"; // Every new visitor starts in English; a chosen language is remembered.
 }
 
 let language = initialLanguage();

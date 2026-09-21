@@ -53,11 +53,11 @@ test('both dictionaries are complete and every key is used somewhere', async () 
   w.close();
 });
 
-test('URL beats remembered preference, then browser; denied storage remains usable', async () => {
+test('URL beats remembered preference; every new visitor starts in English whatever the browser says', async () => {
   for (const [options, expected] of [
-    [{ lang: 'en', saved: 'zh' }, 'en'], [{ lang: null, saved: 'zh' }, 'zh-CN'],
-    [{ lang: null, browser: 'en-GB' }, 'en'], [{ lang: null, browser: 'zh-CN' }, 'zh-CN'],
-    [{ lang: 'invalid', saved: 'en' }, 'en'], [{ lang: null, storageBlocked: true, browser: 'zh-CN' }, 'zh-CN'],
+    [{ lang: 'en', saved: 'zh' }, 'en'], [{ lang: null, saved: 'zh' }, 'zh-CN'], [{ lang: 'zh' }, 'zh-CN'],
+    [{ lang: null, browser: 'en-GB' }, 'en'], [{ lang: null, browser: 'zh-CN' }, 'en'],
+    [{ lang: 'invalid', saved: 'en' }, 'en'], [{ lang: null, storageBlocked: true, browser: 'zh-CN' }, 'en'],
   ]) {
     const w = await site(options);
     assert.equal(w.document.documentElement.lang, expected);
@@ -110,6 +110,35 @@ test('leaving an article for a section renders the home page again and scrolls t
   w.location.hash = '#/essays/beijing-station'; await tick();
   assert.equal(JSON.stringify(w.scrolls.at(-1)), JSON.stringify([{ top: 0, behavior: 'instant' }]));
   assert.match(w.document.title, /永远的北京/);
+  w.close();
+});
+
+test('the static page is English before any script runs', () => {
+  const dom = new JSDOM(html);
+  const d = dom.window.document;
+  assert.equal(d.documentElement.lang, 'en');
+  assert.equal(d.title, 'Tianxing Yu');
+  assert.doesNotMatch(d.querySelector('header').textContent.replace('中文', ''), /[\u3400-\u9fff]/);
+  assert.equal(d.querySelector('[data-language=en]').getAttribute('aria-pressed'), 'true');
+  dom.window.close();
+});
+
+test('leaving an essay returns to the spot on the home page the reader came from', async () => {
+  const w = await site({ lang: 'zh' });
+  Object.defineProperty(w, 'scrollY', { value: 2468, configurable: true });
+  w.location.hash = '#/essays/beijing-station'; await tick();
+  assert.equal(JSON.stringify(w.scrolls.at(-1)), JSON.stringify([{ top: 0, behavior: 'instant' }]));
+  Object.defineProperty(w, 'scrollY', { value: 300, configurable: true });
+  w.document.querySelector('.back-link').click(); await tick(); await tick();
+  assert.ok(w.document.getElementById('top'), 'home page was not rendered again');
+  assert.equal(w.location.hash, '');
+  assert.equal(JSON.stringify(w.scrolls.at(-1)), JSON.stringify([{ top: 2468, behavior: 'instant' }]));
+  // Opened directly, an essay has nowhere to return to, so the back link opens the essays section.
+  const direct = await site({ hash: '#/essays/beijing-station' });
+  direct.document.querySelector('.back-link').click(); await tick();
+  assert.equal(direct.location.hash, '#essays');
+  assert.equal(JSON.stringify(direct.scrolls.at(-1)), JSON.stringify(['into', 'essays']));
+  direct.close();
   w.close();
 });
 
