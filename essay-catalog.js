@@ -123,17 +123,6 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-08-24",
-    "slug": "behind-goebbels",
-    "title": {
-      "zh": "在戈培尔的身后",
-      "en": "In Goebbels’s Wake"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "essay"
-  },
-  {
     "date": "2026-01-30",
     "slug": "yulinzhou-sunset",
     "title": {
