@@ -1,4 +1,5 @@
-/* Stable slugs, original language and complete translated titles. */
+/* Stable slugs, original language, complete translated titles and the kind of piece
+   (diary, fiction or essay) that the essays list shows as a tag. */
 const essays = [
   {
     "date": "2026-09-02",
@@ -8,7 +9,8 @@ const essays = [
       "en": "Delusions of Reform"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "fiction"
   },
   {
     "date": "2026-09-02",
@@ -18,7 +20,8 @@ const essays = [
       "en": "The Only Reader"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "fiction"
   },
   {
     "date": "2026-09-02",
@@ -28,7 +31,8 @@ const essays = [
       "en": "The Key and the Door"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "fiction"
   },
   {
     "date": "2026-09-02",
@@ -38,7 +42,8 @@ const essays = [
       "en": "Who Did Not Come"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "fiction"
   },
   {
     "date": "2026-09-02",
@@ -48,7 +53,8 @@ const essays = [
       "en": "I Thought There Would Be a Sound"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "fiction"
   },
   {
     "date": "2026-06-26",
@@ -58,7 +64,8 @@ const essays = [
       "en": "The End of Freshman Spring"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2026-05-29",
@@ -68,7 +75,8 @@ const essays = [
       "en": "Beijing, Forever"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2026-05-11",
@@ -78,7 +86,8 @@ const essays = [
       "en": "Chasing the Next Bolt of Lightning (A Late Night Before the Computer Exam)"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2026-05-10",
@@ -88,7 +97,8 @@ const essays = [
       "en": "An Ideal Type of Middle-Class Family"
     },
     "originalLanguage": "en",
-    "hasChineseTranslation": true
+    "hasChineseTranslation": true,
+    "kind": "essay"
   },
   {
     "date": "2026-05-14",
@@ -98,7 +108,8 @@ const essays = [
       "en": "A Summer Eve Before Changing Majors"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-12-20",
@@ -108,7 +119,8 @@ const essays = [
       "en": "A Special Entry: 169 Days Until the Gaokao"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-12-20",
@@ -118,7 +130,8 @@ const essays = [
       "en": "169 Days to the Gaokao — A Letter to Grandma"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-08-24",
@@ -128,7 +141,8 @@ const essays = [
       "en": "In Goebbels’s Wake"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2026-01-30",
@@ -138,7 +152,8 @@ const essays = [
       "en": "Sunset at Yulinzhou"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2026-06-02",
@@ -148,7 +163,8 @@ const essays = [
       "en": "Wind Through the Cracks"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "fiction"
   },
   {
     "date": "2026-06-02",
@@ -158,7 +174,8 @@ const essays = [
       "en": "It Died Before Me"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "fiction"
   },
   {
     "date": "2026-06-02",
@@ -168,7 +185,8 @@ const essays = [
       "en": "Dancing on the Ruins"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "fiction"
   },
   {
     "date": "2026-06-02",
@@ -178,7 +196,8 @@ const essays = [
       "en": "She Was Never That Strong"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "fiction"
   },
   {
     "date": "2025-09-01",
@@ -188,7 +207,8 @@ const essays = [
       "en": "Morning in the Fields?"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-09-01",
@@ -198,7 +218,8 @@ const essays = [
       "en": "Nineteen, Gone"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-10-02",
@@ -208,7 +229,8 @@ const essays = [
       "en": "The Train Back"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-09-15",
@@ -218,7 +240,8 @@ const essays = [
       "en": "Ambition"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-09-11",
@@ -228,7 +251,8 @@ const essays = [
       "en": "Diary — September 11, 2024"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2024-09-10",
@@ -238,7 +262,8 @@ const essays = [
       "en": "Rereading a Poem"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-09-08",
@@ -248,7 +273,8 @@ const essays = [
       "en": "Three Years in a Rented Room"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-09-10",
@@ -258,7 +284,8 @@ const essays = [
       "en": "Paddy Fields"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-07-01",
@@ -268,7 +295,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2024-07-02",
@@ -278,7 +306,8 @@ const essays = [
       "en": "In Siping"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-07-03",
@@ -288,7 +317,8 @@ const essays = [
       "en": "In Kaiyuan"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-07-06",
@@ -298,7 +328,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2024-07-09",
@@ -308,7 +339,8 @@ const essays = [
       "en": "In Tianjin"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-07-10",
@@ -318,7 +350,8 @@ const essays = [
       "en": "Arrived in Beijing!"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-07-18",
@@ -328,7 +361,8 @@ const essays = [
       "en": "Diary — July 18, 2024"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2024-08-04",
@@ -338,7 +372,8 @@ const essays = [
       "en": "What Will I Remember High School By?"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-08-16",
@@ -348,7 +383,8 @@ const essays = [
       "en": "Diary — Resolving to Write The Road Not Taken"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2024-08-16",
@@ -358,7 +394,8 @@ const essays = [
       "en": "A Big Fragrant Pear from Korla"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-08-12",
@@ -368,7 +405,8 @@ const essays = [
       "en": "I Envy Your School-Day Romances"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-08-11",
@@ -378,7 +416,8 @@ const essays = [
       "en": "The Invisible Guardian"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-07-18",
@@ -388,7 +427,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2024-08-28",
@@ -398,7 +438,8 @@ const essays = [
       "en": "Obstacles and a Decision"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-07-17",
@@ -408,7 +449,8 @@ const essays = [
       "en": "My Father, Yu Yangpeng"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2024-09-03",
@@ -418,7 +460,8 @@ const essays = [
       "en": "I Missed the Sea in Tanggu, but Found a Lake at Peking University"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2025-07-11",
@@ -428,7 +471,8 @@ const essays = [
       "en": "Diary — Remembering an Essay About “Sixteen Hundred”"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-07-03",
@@ -438,7 +482,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-07-01",
@@ -448,7 +493,8 @@ const essays = [
       "en": "Diary — My Resolve to Change Majors"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": true
+    "hasChineseTranslation": true,
+    "kind": "diary"
   },
   {
     "date": "2025-06-29",
@@ -458,7 +504,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-06-27",
@@ -468,7 +515,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-06-24",
@@ -478,7 +526,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-06-21",
@@ -488,7 +537,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-06-20",
@@ -498,7 +548,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-06-19",
@@ -508,7 +559,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-06-14",
@@ -518,7 +570,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-06-13",
@@ -528,7 +581,8 @@ const essays = [
       "en": "Diary"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-06-12",
@@ -538,7 +592,8 @@ const essays = [
       "en": "Diary — June 12, 2025"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "diary"
   },
   {
     "date": "2025-06-10",
@@ -548,7 +603,8 @@ const essays = [
       "en": "The First Day After the Gaokao!"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2025-10-01",
@@ -558,7 +614,8 @@ const essays = [
       "en": "A Birthday Wish for Myself"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2025-06-01",
@@ -568,7 +625,8 @@ const essays = [
       "en": "When I Wake and Draw the Curtains Again, a Crescent Hooks the Sky"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2025-05-23",
@@ -578,7 +636,8 @@ const essays = [
       "en": "15 Days Until the Gaokao"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   },
   {
     "date": "2025-02-16",
@@ -588,6 +647,7 @@ const essays = [
       "en": "111 Days to the Gaokao — A Stomach Flare-Up"
     },
     "originalLanguage": "zh",
-    "hasChineseTranslation": false
+    "hasChineseTranslation": false,
+    "kind": "essay"
   }
 ];

@@ -1,14 +1,21 @@
 # skywalker.fish
 
-Personal website with Chinese and English editions, built with plain HTML, CSS and JavaScript and Cloudflare Pages Functions.
+Personal website with Chinese and English editions, built with plain HTML, CSS and JavaScript and hosted as a static site on Cloudflare Pages. Everything on it is public; there is no login, no application flow and no backend.
+
+## Layout
+
+One page with four anchored sections — `#about`, `#projects`, `#essays`, `#contact` — under a hero with the name, role and portrait. The header stays sticky; the section links sit on the centre line, the language switch on the right, and a `<details>` menu replaces the links below 600px. An essay opens as its own view at `#/essays/<slug>` with a back link to the essays section.
+
+Older links keep working: `#/essays`, `#/projects` and `#/contact` scroll to their section, and the removed `#/portfolio`, `#/adventures`, `#/albums`, `#/signup` and `#/admin` routes land on the top of the page.
+
+The visual system (warm paper background, deep-red accent, serif display type, hairline lists, red contact block) lives in `style.css` under the tokens at the top. The Chinese edition relaxes the display tracking and leading, because CJK glyphs fill the em box.
 
 ## Language editions
 
 - Chinese: `https://skywalker.fish/?lang=zh`
 - English: `https://skywalker.fish/?lang=en`
-- The language selector appears immediately before login and remains available after login.
 - An explicit `lang` URL parameter takes precedence over the saved language. Without either, English browser preferences select English; other preferences select Chinese. Switching still works when local storage is blocked.
-- Hash routes are shared between editions. Changing language preserves the current route and form drafts. Article reading position is restored by paragraph, and the other edition is fetched before the page swaps so no loading state flashes.
+- Hash routes are shared between editions. Changing language keeps the current section, the essay year filter and the reading position; on an article the other edition is fetched before the page swaps so no loading state flashes.
 - Header labels carry the other edition's text in `data-alt`; the stylesheet reserves that width under each label, so the header keeps the same geometry in both languages. `applyLanguageChrome()` in `i18n.js` runs from `index.html` before the first paint and again on every change.
 - Shared interface copy lives in `i18n.js`; both dictionaries must have the same keys.
 
@@ -16,13 +23,11 @@ Personal website with Chinese and English editions, built with plain HTML, CSS a
 
 `essays/<slug>.html` contains the original authored text. Do not edit originals merely to translate them or correct their wording.
 
-`essay-catalog.js` declares stable slugs, original language, dates and translated titles. English versions live in `essays/en/`; Chinese translations of the English original and mixed-language diary live in `essays/zh/`.
+`essay-catalog.js` declares stable slugs, original language, dates, translated titles and the `kind` of each piece (`diary`, `fiction` or `essay`), which the list shows as a tag. The list can be filtered by year. English versions live in `essays/en/`; Chinese translations of the English original and mixed-language diary live in `essays/zh/`.
 
-The default reader is a single column in the selected language. An English original stays verbatim in the English edition. Readers may choose Original, Translation or Compare. Comparison aligns paragraphs in two columns on wider screens and groups each original paragraph with its translation on mobile. Explicit original/comparison modes may intentionally show another language, with clear labels.
+The default reader is a single column in the selected language. An English original stays verbatim in the English edition. Readers may choose Original, Translation or Compare. Comparison aligns paragraphs in two columns on wider screens and groups each original paragraph with its translation on mobile.
 
-Keep paragraph order, paragraph breaks, intentional blank stanzas, dates, links and meaning when adding a translation. English translations are reading aids; the original remains authoritative. User-supplied names, application text and repository names are not automatically translated. Downloadable project documents keep their original language and are labeled accordingly.
-
-The pre-existing link to `files/未选择的路.pdf` had no corresponding file. Its dialog now says that the manuscript is unavailable instead of offering a broken download. The existing portfolio history is sample data and is labeled as such.
+Keep paragraph order, paragraph breaks, intentional blank stanzas, dates, links and meaning when adding a translation. English translations are reading aids; the original remains authoritative. Downloadable project documents keep their original language and are labeled accordingly.
 
 ## Development and verification
 
@@ -35,10 +40,8 @@ npm --prefix tests test
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-The static preview does not provide the `/api/*` endpoints. Tests mock those endpoints using synthetic data and never submit applications, logins or approvals to the live site.
-
-The tests cover language precedence and persistence, route localization, forms, stale requests, original/translation/comparison reading, translated paragraph coverage and verbatim preservation of the English original.
+The tests cover language precedence and persistence, section routing and legacy routes, the header geometry, the year filter, stale requests, original/translation/comparison reading, translated paragraph coverage and verbatim preservation of the English original, and that no login or API code remains.
 
 ## Hosting
 
-The existing host is Cloudflare Pages with D1 bindings defined in `wrangler.toml`. No runtime package build is needed. Publish the site files and existing Pages Functions through the established Cloudflare project. `node_modules`, tests and local review fixtures are not application assets.
+Cloudflare Pages serves the repository root as static files (`wrangler.toml`). Pushing to `main` triggers the cache purge workflow. `node_modules` and tests are not application assets.

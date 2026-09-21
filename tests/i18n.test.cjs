@@ -2,29 +2,22 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { webcrypto } = require('node:crypto');
 const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8').replace(/<script[\s\S]*?<\/script>/g, '');
 const tick = () => new Promise(resolve => setTimeout(resolve, 15));
-const json = (data, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => data, text: async () => JSON.stringify(data) });
 
-async function site({ lang = 'en', hash = '#/', saved, browser = 'en-US', storageBlocked = false, loggedIn = false, fetch } = {}) {
+async function site({ lang = 'en', hash = '', saved, browser = 'en-US', storageBlocked = false, fetch } = {}) {
   const dom = new JSDOM(html, { url: `https://skywalker.fish/${lang ? '?lang=' + lang : ''}${hash}`, runScripts: 'dangerously', pretendToBeVisual: true });
   const w = dom.window;
-  w.scrollTo = () => {};
+  w.scrolls = [];
+  w.scrollTo = (...args) => w.scrolls.push(args);
   w.scrollBy = () => {};
-  w.alerts = [];
-  w.alert = message => w.alerts.push(message);
-  w.TextEncoder = TextEncoder;
-  Object.defineProperty(w.crypto, 'subtle', { value: webcrypto.subtle });
+  w.HTMLElement.prototype.scrollIntoView = function () { w.scrolls.push(['into', this.id]); };
   Object.defineProperty(w.navigator, 'language', { value: browser });
   if (saved) w.localStorage.setItem('skywalker-language', saved);
   if (storageBlocked) Object.defineProperty(w, 'localStorage', { get() { throw new Error('Storage denied'); } });
-  if (loggedIn) w.sessionStorage.setItem('skywalker-login', '1');
   w.fetch = fetch || (async url => {
-    if (url === '/api/portfolio') return json({ holdings: [] });
-    if (url === '/api/admin') return json([]);
     const file = path.join(root, String(url));
     if (fs.existsSync(file)) return { ok: true, text: async () => fs.readFileSync(file, 'utf8') };
     return { ok: false, status: 404 };
@@ -37,19 +30,24 @@ async function site({ lang = 'en', hash = '#/', saved, browser = 'en-US', storag
   await tick();
   return w;
 }
+function text(w, selector) { return w.document.querySelector(selector).textContent; }
 function assertEnglish(w, selector = '#main') {
-  const text = w.document.querySelector(selector).textContent;
-  assert.doesNotMatch(text, /[\u3400-\u9fff]/, `Unexpected Chinese in ${selector}: ${text}`);
-  assert.doesNotMatch(text, /\$\{|undefined|\[object Object\]/);
+  // The hero shows the Chinese name beside the English one on purpose; everything else must be English.
+  const clone = w.document.querySelector(selector).cloneNode(true);
+  clone.querySelectorAll('.name-alt, .language-switch').forEach(el => el.remove());
+  assert.doesNotMatch(clone.textContent, /[㐀-鿿]/, `Unexpected Chinese in ${selector}: ${clone.textContent}`);
+  assert.doesNotMatch(clone.textContent, /\$\{|undefined|\[object Object\]/);
 }
 
-// This is a behavioral suite: route coverage, persistence, forms and asynchronous races.
-test('both dictionaries are complete and language controls sit before login', async () => {
+test('both dictionaries are complete and every key is used somewhere', async () => {
   const w = await site();
   assert.deepEqual(w.eval('Object.keys(messages.zh).sort()'), w.eval('Object.keys(messages.en).sort()'));
-  for (const key of w.eval('Object.keys(messages.en)')) assert.ok(w.eval(`messages.en[${JSON.stringify(key)}] && messages.zh[${JSON.stringify(key)}]`));
-  const switcher = w.document.querySelector('.language-switch');
-  assert.equal(switcher.nextElementSibling.id, 'btn-login');
+  const sources = ['index.html', 'app.js', 'i18n.js'].map(file => fs.readFileSync(path.join(root, file), 'utf8')).join('\n');
+  const referenced = new Set([...sources.matchAll(/t\("(\w+)"|data-i18n="(\w+)"|kind(Diary|Fiction|Essay)|"(\w+)": "\w+"/g)].flatMap(m => m.slice(1)).filter(Boolean));
+  for (const key of w.eval('Object.keys(messages.en)')) {
+    assert.ok(w.eval(`messages.en[${JSON.stringify(key)}] && messages.zh[${JSON.stringify(key)}]`), `${key} is empty`);
+    assert.ok(sources.includes(`"${key}"`) || sources.includes(`${key}:`) || referenced.has(key), `${key} is never used`);
+  }
   assert.equal(w.document.documentElement.lang, 'en');
   assert.equal(w.document.querySelector('[data-language=en]').getAttribute('aria-pressed'), 'true');
   w.close();
@@ -69,167 +67,145 @@ test('URL beats remembered preference, then browser; denied storage remains usab
   }
 });
 
-test('public and private page chrome is entirely English in the English edition', async () => {
-  const routes = ['#/', '#/projects', '#/portfolio', '#/essays', '#/adventures', '#/contact', '#/signup', '#/admin', '#/albums', '#/albums/pku', '#/albums/%ZZ'];
-  for (const loggedIn of [false, true]) {
-    const w = await site({ loggedIn });
-    for (const hash of routes) {
-      w.location.hash = hash; await tick();
-      assertEnglish(w);
-      assert.equal(w.document.documentElement.lang, 'en');
-    }
-    w.showLoginModal();
-    if (!loggedIn) assertEnglish(w, '#login-overlay');
+test('the home page holds the four sections in order, needs no login, and is entirely English in the English edition', async () => {
+  const w = await site();
+  assert.deepEqual([...w.document.querySelectorAll('main section')].map(section => section.id), ['top', 'about', 'projects', 'essays', 'contact']);
+  assert.equal(w.document.querySelectorAll('.essay-item').length, w.eval('essays.length'));
+  assert.equal(w.document.querySelectorAll('.project-card').length, 7);
+  assert.equal(w.document.querySelector('#btn-login, #btn-signup, .gate-login, .adventure-gate'), null);
+  assert.equal(w.sessionStorage.length, 0);
+  assertEnglish(w);
+  assertEnglish(w, 'header');
+  assertEnglish(w, 'footer');
+  assert.equal(w.document.title, 'Tianxing Yu');
+  w.setLanguage('zh');
+  assert.equal(w.document.title, '于天行');
+  assert.match(text(w, '#about'), /哈尔滨/);
+  w.close();
+});
+
+test('older hash routes land on the matching section and removed routes fall back to the top', async () => {
+  for (const [hash, anchor, cleaned] of [
+    ['#/essays', 'essays', '#essays'], ['#/projects', 'projects', '#projects'], ['#/contact', 'contact', '#contact'],
+    ['#/', 'top', ''], ['#/portfolio', 'top', ''], ['#/adventures', 'top', ''], ['#/albums/pku', 'top', ''], ['#/signup', 'top', ''], ['#/admin', 'top', ''],
+  ]) {
+    const w = await site({ hash });
+    assert.ok(w.document.getElementById('top'), `${hash} did not render the home page`);
+    assert.equal(w.location.hash, cleaned, `${hash} was not rewritten`);
+    assert.equal(w.document.querySelector('.desktop-nav a[aria-current=page]')?.hash, anchor === 'top' ? undefined : `#${anchor}`);
+    assert.equal(JSON.stringify(w.scrolls.at(-1)), JSON.stringify(anchor === 'top' ? [{ top: 0, behavior: 'instant' }] : ['into', anchor]));
     w.close();
   }
 });
 
-test('switching language preserves path, form drafts, relationship toggle and password', async () => {
-  const w = await site({ hash: '#/signup', lang: 'zh' });
-  w.toggleKnow();
-  const values = { 'sig-name': 'Test name', 'sig-experience': 'Shared experience', 'sig-nickname': 'tester', 'sig-password': 'draft-password' };
-  for (const [id, value] of Object.entries(values)) w.document.getElementById(id).value = value;
-  w.document.querySelector('[data-language=en]').click();
-  assert.equal(w.location.hash, '#/signup');
-  assert.equal(new URL(w.location.href).searchParams.get('lang'), 'en');
-  assert.equal(w.localStorage.getItem('skywalker-language'), 'en');
-  for (const [id, value] of Object.entries(values)) assert.equal(w.document.getElementById(id).value, value);
-  assert.equal(w.document.getElementById('circle-know').getAttribute('aria-checked'), 'true');
-  assertEnglish(w);
+test('leaving an article for a section renders the home page again and scrolls to that section', async () => {
+  const w = await site({ hash: '#/essays/beijing-station', lang: 'zh' });
+  await tick();
+  assert.equal(w.document.getElementById('top'), null);
+  assert.equal(w.document.querySelector('.desktop-nav a[aria-current=page]').hash, '#essays');
+  w.location.hash = '#essays'; await tick();
+  assert.ok(w.document.getElementById('top'));
+  assert.ok(w.document.getElementById('essays'));
+  assert.equal(JSON.stringify(w.scrolls.at(-1)), JSON.stringify(['into', 'essays']));
+  w.location.hash = '#/essays/beijing-station'; await tick();
+  assert.equal(JSON.stringify(w.scrolls.at(-1)), JSON.stringify([{ top: 0, behavior: 'instant' }]));
+  assert.match(w.document.title, /永远的北京/);
   w.close();
 });
 
 test('every header label reserves the other edition so switching languages moves nothing', async () => {
   const w = await site({ lang: 'zh' });
   const messages = w.eval('messages');
-  for (const link of w.document.querySelectorAll('.nav-links a')) {
+  for (const link of w.document.querySelectorAll('nav[data-nav] a')) {
     assert.equal(link.textContent, messages.zh[link.dataset.i18n]);
     assert.equal(link.dataset.alt, messages.en[link.dataset.i18n]);
   }
+  assert.equal(w.document.querySelector('.mobile-menu summary').dataset.alt, messages.en.menu);
   for (const button of w.document.querySelectorAll('.language-switch button')) assert.equal(button.dataset.alt, button.textContent);
   w.setLanguage('en');
-  assert.equal(w.document.querySelector('.brand').dataset.alt, messages.zh.profile);
-  assert.equal(w.document.getElementById('btn-signup').dataset.alt, messages.zh.signup);
-  w.sessionStorage.setItem('skywalker-login', '1');
-  w.updateNavState();
-  assert.equal(w.document.getElementById('nav-realname').textContent, messages.en.guest);
-  assert.equal(w.document.getElementById('nav-realname').dataset.alt, messages.zh.guest);
+  assert.equal(w.document.querySelector('.desktop-nav a').dataset.alt, messages.zh.navAbout);
+  assert.equal(text(w, '.wordmark-text'), messages.en.name);
+  assert.equal(new URL(w.location.href).searchParams.get('lang'), 'en');
+  assert.equal(w.localStorage.getItem('skywalker-language'), 'en');
+  w.close();
+});
+
+test('the year filter counts every essay, hides the others and survives a language switch', async () => {
+  const w = await site({ lang: 'zh' });
+  const essays = w.eval('essays');
+  const buttons = [...w.document.querySelectorAll('.essay-year-nav .filter-button')];
+  assert.equal(buttons[0].dataset.year, 'all');
+  assert.equal(buttons[0].querySelector('span').textContent, String(essays.length));
+  const years = [...new Set(essays.map(essay => essay.date.slice(0, 4)))].sort().reverse();
+  assert.deepEqual(buttons.slice(1).map(button => button.dataset.year), years);
+  for (const button of buttons.slice(1)) {
+    assert.equal(button.querySelector('span').textContent, String(essays.filter(essay => essay.date.startsWith(button.dataset.year)).length));
+  }
+  buttons[1].click();
+  const shown = () => [...w.document.querySelectorAll('.essay-item')].filter(item => !item.hidden);
+  assert.equal(shown().length, essays.filter(essay => essay.date.startsWith(years[0])).length);
+  assert.ok(shown().every(item => item.dataset.year === years[0]));
+  assert.equal(w.document.querySelector('.filter-button[aria-pressed=true]').dataset.year, years[0]);
+  w.setLanguage('en');
+  assert.equal(shown().length, essays.filter(essay => essay.date.startsWith(years[0])).length);
+  assert.equal(w.document.querySelector('.filter-button.is-active').dataset.year, years[0]);
+  assertEnglish(w, '#essays');
+  const dates = [...w.document.querySelectorAll('.essay-item time')].map(el => el.getAttribute('datetime'));
+  assert.deepEqual(dates, [...dates].sort().reverse());
+  assert.ok(w.document.querySelector('.essay-item .tag'));
   w.close();
 });
 
 test('switching language on an article fetches the other edition before the page swaps', async () => {
   let release;
   const gate = new Promise(resolve => { release = resolve; });
-  const w = await site({ loggedIn: true, hash: '#/essays/beijing-station', lang: 'zh', fetch: async url => {
+  const w = await site({ hash: '#/essays/beijing-station', lang: 'zh', fetch: async url => {
     if (String(url).startsWith('essays/en/')) await gate;
     return { ok: true, text: async () => fs.readFileSync(path.join(root, String(url)), 'utf8') };
   } });
   await tick();
-  assert.match(w.document.querySelector('.essay-body').textContent, /北京站/);
+  assert.match(text(w, '.essay-body'), /北京站/);
   w.document.querySelector('[data-language=en]').click(); await tick();
   assert.equal(w.document.documentElement.lang, 'zh-CN');
-  assert.match(w.document.querySelector('.essay-body').textContent, /北京站/);
+  assert.match(text(w, '.essay-body'), /北京站/);
   release(); await tick();
   assert.equal(w.document.documentElement.lang, 'en');
-  assert.match(w.document.querySelector('.essay-body').textContent, /Beijing/);
-  w.close();
-});
-
-test('login and API errors use selected language without leaking backend text', async () => {
-  const w = await site({ fetch: async () => ({ ok: false, status: 401, text: async () => 'Invalid credentials' }) });
-  w.showLoginModal();
-  await w.doLogin();
-  assert.match(w.document.getElementById('login-error').textContent, /nickname/);
-  w.document.getElementById('login-nickname').value = 'tester';
-  w.document.getElementById('login-password').value = 'password';
-  await w.doLogin();
-  assertEnglish(w, '#login-overlay');
-  assert.match(w.document.getElementById('login-error').textContent, /not been approved/);
-  w.setLanguage('zh');
-  assert.equal(w.document.getElementById('login-nickname').value, 'tester');
-  assert.equal(w.document.getElementById('login-password').value, 'password');
-  assert.match(w.applicationError('该昵称已被占用', 409), /昵称/);
-  w.setLanguage('en');
-  assert.match(w.applicationError('该昵称已被占用', 409), /nickname is taken/);
-  assert.doesNotMatch(w.applicationError('数据库出错', 500), /数据库/);
-  w.close();
-});
-
-test('project popups, portfolio details and admin states are localized', async () => {
-  const w = await site({ hash: '#/projects', loggedIn: true });
-  w.document.querySelector('.project-card').click();
-  assertEnglish(w, '.overlay:not(.hidden)');
-  w.dismissDialogs();
-  w.showStarPopup({ name: '贵州茅台', code: '600519', shares: 50, cost_price: 1680, price: 1700, pnl: 1.2, weight: 10, market_open: false });
-  assertEnglish(w, '#star-popup');
-  assert.match(w.document.getElementById('star-popup').textContent, /Kweichow Moutai/);
-  w.renderApplicationList([{ id: 1, nickname: 'Tester', status: 'pending', know_skywalker: false, created_at: '2026-09-06 12:00:00', who_are_you: 'Reader' }]);
-  assertEnglish(w);
-  assert.match(w.document.getElementById('main').textContent, /1 application/);
-  assert.ok(w.document.querySelector('#app-1 .btn-approve'));
-  w.close();
-});
-
-test('portfolio retry replaces the failed view instead of duplicating it', async () => {
-  const w = await site({ hash: '#/portfolio', fetch: async () => { throw new Error('offline'); } });
-  assertEnglish(w);
-  w.document.querySelector('.portfolio-container button').click(); await tick();
-  assert.equal(w.document.querySelectorAll('.portfolio-container').length, 1);
+  assert.match(text(w, '.essay-body'), /Beijing/);
   w.close();
 });
 
 test('late essay responses cannot overwrite the next page or language', async () => {
   let release;
   const response = new Promise(resolve => { release = resolve; });
-  const w = await site({ loggedIn: true, hash: '#/essays/beijing-station', fetch: async () => response });
-  w.location.hash = '#/contact'; await tick();
+  const w = await site({ hash: '#/essays/beijing-station', fetch: async () => response });
+  w.location.hash = '#contact'; await tick();
   release({ ok: true, text: async () => '<div class="essay-body"><p>Old essay</p></div>' }); await tick();
-  assert.match(w.document.getElementById('main').textContent, /Contact/);
-  assert.doesNotMatch(w.document.getElementById('main').textContent, /Old essay/);
+  assert.match(text(w, '#main'), /Contact/);
+  assert.doesNotMatch(text(w, '#main'), /Old essay/);
   w.close();
 });
 
-test('a pending application survives language switching without duplicate submissions', async () => {
-  let release, requests = 0;
-  const response = new Promise(resolve => { release = resolve; });
-  const w = await site({ hash: '#/signup', lang: 'zh', fetch: async () => { requests++; return response; } });
-  for (const [id, value] of Object.entries({ 'sig-nickname': 'tester', 'sig-password': 'password', 'sig-who': 'Reader', 'sig-howfound': 'GitHub' })) w.document.getElementById(id).value = value;
-  const pending = w.submitApplication(); await tick();
-  w.setLanguage('en');
-  assert.equal(w.document.getElementById('btn-submit').disabled, true);
-  assert.equal(w.document.getElementById('btn-submit').textContent, 'Submitting…');
-  await w.submitApplication();
-  assert.equal(requests, 1);
-  release({ ok: false, status: 409, text: async () => '该昵称已有待审批的申请' });
-  await pending;
-  assert.match(w.alerts.at(-1), /already pending/);
-  assert.equal(w.document.getElementById('btn-submit').disabled, false);
+test('a missing or failing essay shows a localized message with a way back', async () => {
+  const w = await site({ hash: '#/essays/no-such-essay' });
+  assert.match(text(w, '#main'), /could not be found/);
+  assert.ok(w.document.querySelector('.back-link'));
   w.close();
-});
-
-test('login keeps the protected route and logout immediately locks it again', async () => {
-  const w = await site({ hash: '#/essays', fetch: async () => json({ nickname: 'tester', name: '', know_skywalker: false }) });
-  w.showLoginModal();
-  w.document.getElementById('login-nickname').value = 'tester';
-  w.document.getElementById('login-password').value = 'password';
-  await w.doLogin();
-  assert.equal(w.location.hash, '#/essays');
-  assert.ok(w.document.querySelector('.essay-row'));
-  w.logout(); await tick();
-  w.location.hash = '#/essays'; await tick();
-  assert.ok(w.document.querySelector('.gate-login'));
-  w.close();
+  const failing = await site({ hash: '#/essays/beijing-station', fetch: async () => ({ ok: false, status: 500, text: async () => '' }) });
+  await tick();
+  assert.match(text(failing, '#main'), /Could not load/);
+  assert.equal(failing.document.querySelector('.essay-article .empty-state button').textContent, 'Try again');
+  failing.close();
 });
 
 test('English original remains verbatim; Chinese translation and paragraph comparison are optional', async () => {
-  const w = await site({ loggedIn: true, hash: '#/essays/ideal-middle-class', lang: 'en' });
+  const w = await site({ hash: '#/essays/ideal-middle-class', lang: 'en' });
   await tick();
   const original = new JSDOM(fs.readFileSync(path.join(root, 'essays/ideal-middle-class.html'), 'utf8'));
-  assert.equal(w.document.querySelector('.essay-body').textContent, original.window.document.querySelector('.essay-body').textContent);
+  assert.equal(text(w, '.essay-body'), original.window.document.querySelector('.essay-body').textContent);
   assert.equal(w.document.querySelector('.reading-option[aria-pressed=true]').textContent, 'Original');
   assertEnglish(w);
   w.setLanguage('zh'); await tick();
-  assert.match(w.document.querySelector('.essay-body').textContent, /中产阶级/);
+  assert.match(text(w, '.essay-body'), /中产阶级/);
   assert.equal(w.document.querySelector('.reading-option[aria-pressed=true]').textContent, '译文');
   w.setEssayMode('parallel'); await tick();
   assert.equal(w.document.querySelectorAll('.parallel-row').length, 3);
@@ -241,65 +217,21 @@ test('English original remains verbatim; Chinese translation and paragraph compa
 });
 
 test('Chinese originals use English translations by default in English and compare aligned paragraphs', async () => {
-  const w = await site({ loggedIn: true, hash: '#/essays/beijing-station', lang: 'en' });
+  const w = await site({ hash: '#/essays/beijing-station', lang: 'en' });
   await tick();
   assertEnglish(w);
   assert.equal(w.document.querySelector('.reading-option[aria-pressed=true]').textContent, 'Translation');
   w.setEssayMode('parallel'); await tick();
   assert.equal(w.document.querySelectorAll('.parallel-row').length, 4);
-  assert.match(w.document.querySelector('.parallel-row .essay-body[lang=zh-CN]').textContent, /北京站/);
+  assert.match(text(w, '.parallel-row .essay-body[lang=zh-CN]'), /北京站/);
   w.setEssayMode('original'); await tick();
-  assert.equal(w.document.querySelector('h1').textContent, '永远的北京');
+  assert.equal(text(w, 'h1'), '永远的北京');
   w.close();
 });
 
-test('stale login replies cannot replace a newer account after the dialog is recreated', async () => {
-  const releases = [];
-  const w = await site({ fetch: async () => new Promise(resolve => releases.push(resolve)) });
-  w.showLoginModal();
-  w.document.getElementById('login-nickname').value = 'first';
-  w.document.getElementById('login-password').value = 'password';
-  const first = w.doLogin(); await tick();
-  w.setLanguage('zh');
-  w.document.getElementById('login-nickname').value = 'second';
-  const second = w.doLogin(); await tick();
-  releases[1](json({nickname:'second', name:'', know_skywalker:false})); await second;
-  releases[0](json({nickname:'first', name:'', know_skywalker:false})); await first;
-  assert.equal(w.sessionStorage.getItem('skywalker-nickname'), 'second');
-  w.close();
-});
-
-test('canceling login prevents its delayed reply from signing the visitor in', async () => {
-  let release;
-  const w = await site({ fetch: async () => new Promise(resolve => { release = resolve; }) });
-  w.showLoginModal();
-  w.document.getElementById('login-nickname').value = 'tester';
-  w.document.getElementById('login-password').value = 'password';
-  const pending = w.doLogin(); await tick();
-  w.closeLoginModal();
-  release(json({nickname:'tester', name:'', know_skywalker:false})); await pending;
-  assert.notEqual(w.sessionStorage.getItem('skywalker-login'), '1');
-  w.close();
-});
-
-test('late approval response does not replace a page visited after the action', async () => {
-  let release;
-  const w = await site({ hash: '#/admin', fetch: async () => new Promise(resolve => { release = resolve; }) });
-  w.sessionStorage.setItem('skywalker-admin-key', 'test-only');
-  w.renderApplicationList([{ id: 1, nickname: 'Reader', status: 'pending' }]);
-  const pending = w.approveApp(1); await tick();
-  w.location.hash = '#/contact'; await tick();
-  release(json({ok:true})); await pending;
-  assert.match(w.document.querySelector('#main').textContent, /Contact/);
-  assert.doesNotMatch(w.document.querySelector('#main').textContent, /Access applications/);
-  w.close();
-});
-
-test('Hong Kong share prices keep their own currency in both languages', async () => {
-  const w = await site();
-  const holding = { code:'00700', name:'腾讯控股', shares:70, cost_price:380, price:400, weight:12, pnl:5 };
-  w.showStarPopup(holding);
-  assert.match(w.document.getElementById('star-popup').textContent, /HK\$/);
-  assert.doesNotMatch(w.document.getElementById('star-popup').textContent, /CN¥/);
-  w.close();
+test('no login, application, admin or portfolio code remains', () => {
+  const sources = ['index.html', 'app.js', 'i18n.js', 'style.css'].map(file => fs.readFileSync(path.join(root, file), 'utf8')).join('\n');
+  assert.doesNotMatch(sources, /\/api\/|sessionStorage|showLoginModal|renderSignup|renderAdmin|renderPortfolio|isLoggedIn/);
+  assert.ok(!fs.existsSync(path.join(root, 'functions')));
+  assert.doesNotMatch(fs.readFileSync(path.join(root, 'wrangler.toml'), 'utf8'), /d1_databases/);
 });

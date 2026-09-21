@@ -52,6 +52,8 @@ test('the essay catalog contains 59 unique essays with Chinese and English title
     assert.match(essay.title.zh, han, `${essay.slug}: Chinese title is not localized`);
     assert.doesNotMatch(essay.title.en, han, `${essay.slug}: Chinese text in English title`);
     assert.ok(['zh', 'en'].includes(essay.originalLanguage), `${essay.slug}: invalid original language`);
+    assert.ok(['diary', 'fiction', 'essay'].includes(essay.kind), `${essay.slug}: invalid kind`);
+    if (essay.slug.startsWith('diary-') || essay.title.zh.startsWith('日记')) assert.equal(essay.kind, 'diary', `${essay.slug}: diary entries are tagged as diary`);
   }
 });
 
