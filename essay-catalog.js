@@ -310,17 +310,6 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-07-06",
-    "slug": "diary-20240706",
-    "title": {
-      "zh": "日记",
-      "en": "Diary"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "diary"
-  },
-  {
     "date": "2024-07-09",
     "slug": "in-tianjin",
     "title": {
@@ -343,11 +332,11 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-07-18",
-    "slug": "diary-20240718",
+    "date": "2025-07-18",
+    "slug": "diary-20250718",
     "title": {
       "zh": "日记",
-      "en": "Diary — July 18, 2024"
+      "en": "Diary — July 18, 2025"
     },
     "originalLanguage": "zh",
     "hasChineseTranslation": false,
@@ -407,17 +396,6 @@ const essays = [
     "originalLanguage": "zh",
     "hasChineseTranslation": false,
     "kind": "essay"
-  },
-  {
-    "date": "2024-07-18",
-    "slug": "diary-20240718b",
-    "title": {
-      "zh": "日记",
-      "en": "Diary"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "diary"
   },
   {
     "date": "2024-07-17",

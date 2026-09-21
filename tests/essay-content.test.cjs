@@ -39,10 +39,10 @@ function readEssay(relativePath) {
   }
 }
 
-test('the essay catalog contains 51 unique essays with Chinese and English titles', () => {
+test('the essay catalog contains 49 unique essays with Chinese and English titles', () => {
   assert.ok(Array.isArray(catalog));
-  assert.equal(catalog.length, 51);
-  assert.equal(new Set(catalog.map(essay => essay.slug)).size, 51);
+  assert.equal(catalog.length, 49);
+  assert.equal(new Set(catalog.map(essay => essay.slug)).size, 49);
   for (const essay of catalog) {
     assert.match(essay.slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     assert.equal(typeof essay.title?.zh, 'string', `${essay.slug}: missing Chinese title`);
