@@ -3,7 +3,7 @@ const messages = {
   "zh": {
     "name": "于天行",
     "nameAlt": "Tianxing Yu",
-    "eyebrow": "计算机科学 · 机器学习",
+    "eyebrow": "金融学-计算机科学",
     "profileStudy": "北京大学本科生 · 2025 级",
     "profileRoles": "开发者、金融研究员、社会评论爱好者，汉族男性",
     "portraitCaption": "北京大学 · 北京",
@@ -72,7 +72,7 @@ const messages = {
   "en": {
     "name": "Tianxing Yu",
     "nameAlt": "于天行",
-    "eyebrow": "Computer Science · Machine Learning",
+    "eyebrow": "Finance – Computer Science",
     "profileStudy": "Undergraduate at Peking University · Entered in 2025",
     "profileRoles": "Developer, financial researcher, and social commentary enthusiast. Han Chinese, male.",
     "portraitCaption": "Peking University · Beijing",
