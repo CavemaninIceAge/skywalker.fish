@@ -240,11 +240,11 @@ function renderAbout() {
 
 function renderProjects() {
   const projects = [
-    { name: t("projectProposal"), desc: t("projectProposalDesc"), url: "https://github.com/CavemaninIceAge/model-cppcc-proposal", download: "files/模拟政协-提案.docx" },
     { name: t("projectInterview"), desc: t("projectInterviewDesc"), url: "https://github.com/CavemaninIceAge/harbin-no3-alumni-interview", download: "files/哈三中校友会采访.pdf" },
     { name: "skywalker.fish", desc: t("projectSiteDesc"), url: "https://github.com/CavemaninIceAge/skywalker.fish" },
     { name: "Mahjong", desc: t("projectMahjongDesc"), url: "https://github.com/Yizhilaomuji/Mahjong" },
     { name: "Amazon_Chess_AI", desc: t("projectAmazonDesc"), url: "https://github.com/CavemaninIceAge/Amazon_Chess_AI" },
+    { name: t("projectProposal"), desc: t("projectProposalDesc"), url: "https://github.com/CavemaninIceAge/model-cppcc-proposal", download: "files/模拟政协-提案.docx" },
   ];
   return `
     <section id="projects" class="section projects-section">
