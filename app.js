@@ -244,9 +244,7 @@ function renderProjects() {
     { name: t("projectInterview"), desc: t("projectInterviewDesc"), download: "files/哈三中校友会采访.pdf" },
     { name: "skywalker.fish", desc: t("projectSiteDesc"), url: "https://github.com/CavemaninIceAge/skywalker.fish" },
     { name: "Mahjong", desc: t("projectMahjongDesc"), url: "https://github.com/Yizhilaomuji/Mahjong" },
-    { name: "MomentumStrategy", desc: t("projectMomentumDesc"), url: "https://github.com/CavemaninIceAge/MomentumStrategy" },
     { name: "Amazon_Chess_AI", desc: t("projectAmazonDesc"), url: "https://github.com/CavemaninIceAge/Amazon_Chess_AI" },
-    { name: "US-Leading Attempt", desc: t("projectUsDesc"), url: "https://github.com/CavemaninIceAge/US-Leading-Attempt" },
   ];
   return `
     <section id="projects" class="section projects-section">

@@ -71,7 +71,7 @@ test('the home page holds the four sections in order, needs no login, and is ent
   const w = await site();
   assert.deepEqual([...w.document.querySelectorAll('main section')].map(section => section.id), ['top', 'about', 'projects', 'essays', 'contact']);
   assert.equal(w.document.querySelectorAll('.essay-item').length, w.eval('essays.length'));
-  assert.equal(w.document.querySelectorAll('.project-card').length, 7);
+  assert.equal(w.document.querySelectorAll('.project-card').length, 5);
   assert.equal(w.document.querySelector('#btn-login, #btn-signup, .gate-login, .adventure-gate'), null);
   assert.equal(w.sessionStorage.length, 0);
   assertEnglish(w);
