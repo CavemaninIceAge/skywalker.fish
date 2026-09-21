@@ -25,7 +25,7 @@ const loadedEssayDocuments = new Set();
 const links = {
   email: "txyu25@stu.pku.edu.cn",
   github: "https://github.com/CavemaninIceAge",
-  zhihu: "https://www.zhihu.com/people/SkywalkerFish",
+  zhihu: "https://www.zhihu.com/people/changqin1917",
   huggingface: "https://huggingface.co/SkywalkerFish",
   quora: "https://www.quora.com/profile/SkywalkerFish",
 };
