@@ -123,17 +123,6 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-12-20",
-    "slug": "letter-to-grandma",
-    "title": {
-      "zh": "距离高考169天-写给我姥姥",
-      "en": "169 Days to the Gaokao — A Letter to Grandma"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "essay"
-  },
-  {
     "date": "2024-08-24",
     "slug": "behind-goebbels",
     "title": {
@@ -486,74 +475,8 @@ const essays = [
     "kind": "diary"
   },
   {
-    "date": "2025-07-01",
-    "slug": "diary-20250701",
-    "title": {
-      "zh": "日记—转专业的决心",
-      "en": "Diary — My Resolve to Change Majors"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": true,
-    "kind": "diary"
-  },
-  {
-    "date": "2025-06-29",
-    "slug": "diary-20250629",
-    "title": {
-      "zh": "日记",
-      "en": "Diary"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "diary"
-  },
-  {
-    "date": "2025-06-27",
-    "slug": "diary-20250627",
-    "title": {
-      "zh": "日记",
-      "en": "Diary"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "diary"
-  },
-  {
-    "date": "2025-06-24",
-    "slug": "diary-20250624",
-    "title": {
-      "zh": "日记",
-      "en": "Diary"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "diary"
-  },
-  {
     "date": "2025-06-21",
     "slug": "diary-20250621",
-    "title": {
-      "zh": "日记",
-      "en": "Diary"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "diary"
-  },
-  {
-    "date": "2025-06-20",
-    "slug": "diary-20250620",
-    "title": {
-      "zh": "日记",
-      "en": "Diary"
-    },
-    "originalLanguage": "zh",
-    "hasChineseTranslation": false,
-    "kind": "diary"
-  },
-  {
-    "date": "2025-06-19",
-    "slug": "diary-20250619",
     "title": {
       "zh": "日记",
       "en": "Diary"

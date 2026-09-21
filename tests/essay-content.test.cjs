@@ -39,10 +39,10 @@ function readEssay(relativePath) {
   }
 }
 
-test('the essay catalog contains 59 unique essays with Chinese and English titles', () => {
+test('the essay catalog contains 52 unique essays with Chinese and English titles', () => {
   assert.ok(Array.isArray(catalog));
-  assert.equal(catalog.length, 59);
-  assert.equal(new Set(catalog.map(essay => essay.slug)).size, 59);
+  assert.equal(catalog.length, 52);
+  assert.equal(new Set(catalog.map(essay => essay.slug)).size, 52);
   for (const essay of catalog) {
     assert.match(essay.slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     assert.equal(typeof essay.title?.zh, 'string', `${essay.slug}: missing Chinese title`);
@@ -80,7 +80,7 @@ test('every English edition retains all original paragraphs and the original dat
 test('every declared Chinese counterpart exists and retains the complete paragraph structure', async t => {
   const counterparts = catalog.filter(essay => essay.hasChineseTranslation);
   assert.ok(counterparts.length, 'No Chinese counterparts are declared');
-  for (const slug of ['ideal-middle-class', 'diary-20250701']) {
+  for (const slug of ['ideal-middle-class']) {
     assert.ok(counterparts.some(essay => essay.slug === slug), `${slug}: required Chinese counterpart is not declared`);
   }
   for (const essay of counterparts) {
