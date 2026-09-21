@@ -365,7 +365,7 @@ const essays = [
     "kind": "essay"
   },
   {
-    "date": "2024-07-17",
+    "date": "2025-07-17",
     "slug": "not-crushed-by-ruins",
     "title": {
       "zh": "我的父亲于洋鹏",
